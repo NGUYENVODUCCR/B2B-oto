@@ -1,5 +1,7 @@
 # Application
 web/app/plugins/*
+!web/app/plugins/b2b-core/
+!web/app/plugins/b2b-core/**
 !web/app/plugins/.gitkeep
 web/app/mu-plugins/*/
 web/app/themes/twentytwentyfive/
