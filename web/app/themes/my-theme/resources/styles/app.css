@@ -1,3 +1,5 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import './components/navbar.css';
+@import './components/profile-modal.css';
+@import './base/reset.css';
+@import './base/navbar-overrides.css';
+@import './components/chat-order-panel.css';
