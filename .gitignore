@@ -1,38 +1,71 @@
-# Application
-web/app/plugins/*
-!web/app/plugins/b2b-core/
-!web/app/plugins/b2b-core/**
-!web/app/plugins/.gitkeep
-web/app/mu-plugins/*/
-web/app/themes/twentytwentyfive/
-web/app/upgrade
-web/app/uploads/*
-!web/app/uploads/.gitkeep
-web/app/cache/*
-
-# WordPress
-web/wp
-web/.htaccess
-
-# Logs
-*.log
-
-# Dotenv
+# ENV
 .env
 .env.*
 !.env.example
 
-# Composer
-/vendor
+# COMPOSER / VENDOR
+/vendor/
+/composer.phar
 auth.json
 
-# WP-CLI
-wp-cli.local.yml
+# Plugin vendor
+/web/app/plugins/b2b-core/vendor/
 
-# Node
+# Theme vendor
+/web/app/themes/my-theme/vendor/
+
+# WORDPRESS CORE
+/web/wp/
+/web/.htaccess
+
+# UPLOADS / CACHE
+/web/app/uploads/*
+!/web/app/uploads/.gitkeep
+
+/web/app/cache/*
+!/web/app/cache/.gitkeep
+
+/web/app/upgrade/
+
+# MU PLUGINS
+/web/app/mu-plugins/*/
+
+# DEFAULT WORDPRESS THEMES
+/web/app/themes/twentytwentyfive/
+/web/app/themes/twentytwentyfour/
+/web/app/themes/twentytwentythree/
+
+# NODE MODULES
 node_modules/
 
-# Sage theme build
-web/app/themes/my-theme/node_modules/
-web/app/themes/my-theme/vendor/
-web/app/themes/my-theme/public/
+/web/app/themes/my-theme/node_modules/
+
+# SAGE / VITE BUILD
+/web/app/themes/my-theme/public/build/
+/web/app/themes/my-theme/public/hot
+
+# STORAGE / CACHE / LOGS
+/web/app/themes/my-theme/storage/logs/
+/web/app/themes/my-theme/storage/framework/cache/
+/web/app/themes/my-theme/storage/framework/views/
+
+*.log
+debug.log
+
+# TEMP FILES
+tmp_*.php
+*.tmp
+*.bak
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+
+.idea/
+.vscode/
+
+# DOCKER
+docker-compose.override.yml
+
+# WP CLI
+wp-cli.local.yml
