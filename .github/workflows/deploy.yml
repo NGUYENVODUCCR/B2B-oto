@@ -91,7 +91,7 @@ jobs:
             cat > docker-compose.yml <<EOF
             services:
               wordpress:
-                image: ${DOCKERHUB_USERNAME}/b2b-oto:latest
+                image: \${DOCKERHUB_USERNAME}/b2b-oto:latest
 
                 container_name: sanoto-wordpress
 
