@@ -1,0 +1,24 @@
+[definition]
+🧑‍💼 Seller là tài khoản được phép bán sản phẩm trên hệ thống B2B.
+
+[registration]
+Để trở thành seller: người dùng cần gửi yêu cầu đăng ký seller.
+
+[required_documents]
+Admin có thể yêu cầu:
+- tên công ty
+- mã số thuế
+- giấy phép doanh nghiệp
+
+[approval]
+Seller chỉ được đăng sản phẩm sau khi được admin xét duyệt.
+
+[seller_permissions]
+Seller có thể:
+- đăng sản phẩm
+- nhận RFQ
+- gửi quotation
+- thương lượng với buyer
+
+[restriction]
+Seller chưa được duyệt không thể đăng sản phẩm.

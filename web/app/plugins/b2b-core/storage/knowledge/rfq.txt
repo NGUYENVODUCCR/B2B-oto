@@ -1,0 +1,29 @@
+[definition]
+📝 RFQ loại cơ bản là yêu cầu báo giá do buyer tạo để mua 1 sản phẩm nào đó mà seller đăng tải.
+📝 RFQ loại đặc biệt là yêu cầu thu mua số lượng lớn, support sẽ đứng ra hỗ trợ xuyên suốt quá trình mua hàng.
+
+[buyer_action]
+Buyer có thể:
+- Tạo RFQ
+- Điền thông tin theo form RFQ quy định sẵn
+
+[rfq_content]
+Hệ thống có 2 loại RFQ.
+1/ RFQ loại cơ bản ngay trên bài đăng sản phẩm sẽ chứa:
+- Tên sản phẩm
+- Số lượng
+2/ RFQ loại đặc biệt thu mua số lượng lớn sẽ có thêm các trường phục vụ:
+- Thời hạn cần hàng
+- Màu sắc
+- Năm sản xuất
+- Giá mong muốn/1 xe
+- Mô tả sản phẩm
+
+[seller_action]
+Seller sẽ xem RFQ và gửi quotation phù hợp.
+
+[next_step]
+Sau khi nhận quotation buyer có thể:
+- Thương lượng tiếp
+- Chấp nhận báo giá này
+- Từ chối báo giá này

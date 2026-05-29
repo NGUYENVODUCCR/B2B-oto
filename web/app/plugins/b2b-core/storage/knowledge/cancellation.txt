@@ -1,0 +1,24 @@
+[definition]
+❌ Cancellation là quá trình hủy giao dịch hoặc hủy contract.
+
+[restriction]
+Không thể tự hủy giao dịch sau khi:
+- contract đã ký
+- payment đã completed
+- escrow đã paid
+
+[cancellation_process]
+Nếu muốn cancellation: user phải gửi yêu cầu support.
+
+[support_review]
+Support sẽ xem:
+- contract status
+- payment status
+- dispute history
+- giao dịch liên quan
+
+[result]
+Cancellation có thể:
+- bị từ chối
+- được chấp nhận
+- hoặc hoàn tiền một phần

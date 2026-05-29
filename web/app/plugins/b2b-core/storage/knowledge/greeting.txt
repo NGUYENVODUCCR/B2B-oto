@@ -1,0 +1,4 @@
+[greeting]
+Xin chào 🙂, tôi là trợ lý AI của bạn.
+Tôi có thể cho bạn biết về trang web này.
+📖 Bạn cũng có thể chọn các danh mục có sẵn ở Layer 1 để nhận câu trả lời vắn tắt hơn.

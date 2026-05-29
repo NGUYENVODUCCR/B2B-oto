@@ -1,0 +1,22 @@
+[definition]
+📄 Quotation là hành động seller gửi form báo giá chi tiết về sản phẩm đến buyer.
+
+[quotation_content]
+Báo giá mà seller gửi đi thường bao gồm:
+- Giá sản phẩm / 1 xe
+- Số lượng
+- % Khuyến mãi theo số lượng (được quy định nội bộ của công ty seller hoặc qua thương lượng)
+- Số tiền buyer đã được seller khuyến mãi
+- Tổng tiền thực tế buyer sẽ phải chi trả cho đơn hàng sau khi - số tiền khuyến mãi
+
+[buyer_action]
+Buyer có thể:
+- Chấp nhận quotation
+- Từ chối quotation
+- Thương lượng tiếp
+
+[negotiation]
+buyer và seller có thể chỉnh sửa quotation trong giai đoạn negotiation.
+
+[next_step]
+Nếu hai bên đồng ý quotation: hệ thống sẽ tạo contract điện tử.

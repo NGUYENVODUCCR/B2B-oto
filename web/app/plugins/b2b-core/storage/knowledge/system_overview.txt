@@ -1,0 +1,22 @@
+[platform]
+🌐 Hệ thống là nền tảng thương mại điện tử B2B ngành ô tô.
+
+[roles]
+Các vai trò trong hệ thống gồm:
+- buyer
+- seller
+- support
+- admin
+
+[main_flow]
+Quy trình giao dịch cơ bản:
+RFQ → quotation → negotiation → contract → payment → order.
+
+[buyer]
+Buyer là người mua tạo yêu cầu báo giá và thanh toán giao dịch.
+
+[seller]
+Seller là người bán gửi báo giá và cung cấp sản phẩm.
+
+[protection]
+💳 Hệ thống sử dụng escrow để giữ tiền trung gian nhằm bảo vệ giao dịch B2B.

@@ -1,0 +1,21 @@
+[definition]
+💳 Payment là quá trình buyer thanh toán vào escrow, để hoàn tất đơn hàng và seller sẽ vận chuyển hàng sau bước này.
+
+[payment_status]
+Các trạng thái payment gồm:
+- Đang thanh toán
+- Đã thanh toán
+- Đã giải ngân
+- Được hoàn lại tiền
+
+[payment_flow]
+Buyer cần hoàn tất payment trước khi seller giao hàng.
+
+[refund]
+Nếu dispute được chấp nhận: payment có thể được refunded.
+
+[support]
+Support có thể xem:
+- Payment status
+- Lịch sử payment
+- Trạng thái refund

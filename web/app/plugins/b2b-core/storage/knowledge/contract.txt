@@ -1,0 +1,20 @@
+[definition]
+🤝📑 Contract là hợp đồng điện tử chứa thông tin và điều khoản của buyer và seller do hệ thống tự động cung cấp, nó sẽ được chốt sau khi 2 bên ký điện tử xác nhận và không thể thay đổi thủ công/một chiều được.
+
+[creation]
+Contract được tạo khi buyer và seller đồng ý quotation.
+
+[signing]
+Hai bên cần ký contract trước khi thanh toán escrow.
+
+[contract_effect]
+Sau khi contract đã ký: giao dịch được xem là chính thức.
+
+[cancellation]
+Không thể tự hủy contract sau khi đã ký và thanh toán.
+
+[compensation]
+Nếu một bên đơn phương hủy contract: có thể phát sinh bồi thường.
+
+[support]
+Nếu cần hỗ trợ contract: user có thể gửi yêu cầu support.

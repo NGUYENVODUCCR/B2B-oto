@@ -1,0 +1,20 @@
+[definition]
+💳 Escrow là cơ chế giữ tiền trung gian để bảo vệ giao dịch, tránh thất thoát tài sản của cả 2 phía người dùng.
+
+[how_it_works]
+Buyer thanh toán tiền vào escrow trước.
+
+[release_condition]
+Seller chỉ nhận được tiền khi:
+- Giao hàng thành công
+- buyer xác nhận
+- Hoặc support/admin xác nhận xử lý hoàn tất
+
+[protection]
+Escrow giúp giảm rủi ro lừa đảo trong giao dịch B2B.
+
+[dispute]
+Nếu có dispute: support có thể xem trạng thái escrow.
+
+[warning]
+AI không có quyền tự giải ngân escrow.

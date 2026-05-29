@@ -1,0 +1,30 @@
+[definition]
+⚠️ "Dispute" là tranh chấp giữa buyer và seller trong giao dịch.
+
+[open_ticket]
+💡 Giải pháp: Người dùng có thể mở support ticket để yêu cầu xử lý dispute bằng cách bấm vào ô support trên ô tác vụ bị mắc kẹt.
+
+[dispute_reason]
+Dispute có thể xảy ra khi:
+- Giao hàng sai
+- Chậm giao hàng
+- Không đúng quotation
+- Không đồng ý thanh toán
+
+[support_review]
+Support có thể xem:
+- quotation
+- contract
+- payment
+- order status
+- Lịch sử giao dịch
+
+[support_action]
+Support có thể:
+- Hòa giải dispute
+- Tư vấn xử lý
+- Hủy giao dịch
+- Hỗ trợ refund
+
+[admin]
+Admin có thể hỗ trợ support trong dispute phức tạp.

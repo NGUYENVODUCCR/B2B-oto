@@ -1,0 +1,17 @@
+[definition]
+⚖️ Negotiation là giai đoạn thương lượng sau khi hoàn tất form báo giá giữa buyer và seller.
+
+[editable_fields]
+Hai bên có thể:
+- Chỉnh giá
+- Chỉnh số lượng
+- Cập nhật % và tiền khuyến mãi
+
+[negotiation_flow]
+Negotiation diễn ra sau quotation và trước contract.
+
+[support_policy]
+Support không tự động can thiệp negotiation.
+
+[dispute]
+Nếu negotiation xảy ra tranh chấp: user có thể gửi yêu cầu support.

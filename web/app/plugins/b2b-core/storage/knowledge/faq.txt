@@ -1,0 +1,24 @@
+[faq]
+❓
+1. Escrow là gì?
+Escrow là hệ thống giữ tiền trung gian bảo vệ giao dịch.
+
+2. RFQ là gì?
+RFQ là yêu cầu báo giá do buyer tạo.
+
+3. Seller làm sao đăng sản phẩm?
+Seller cần được admin duyệt.
+
+4. Khi nào tạo contract?
+Contract được tạo khi hai bên đồng ý quotation.
+
+5. Có thể hủy contract không?
+Sau khi contract đã ký:
+cần support xử lý cancellation.
+
+6. Support có thể làm gì?
+Support có thể xử lý dispute và refund.
+
+7. Payment có các trạng thái nào?
+Payment gồm:
+pending, paid, released, refunded.

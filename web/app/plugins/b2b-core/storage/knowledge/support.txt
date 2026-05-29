@@ -1,0 +1,18 @@
+[definition]
+🎧 Support là bộ phận trung gian hỗ trợ giao dịch và dispute.
+
+[permission]
+Support chỉ được xem dữ liệu giao dịch khi user gửi yêu cầu hỗ trợ.
+
+[support_scope]
+Support có thể hỗ trợ:
+- dispute
+- refund
+- contract issue
+- payment issue
+
+[privacy]
+Support không tự động đọc toàn bộ tin nhắn riêng tư.
+
+[admin]
+🛠️ Một số trường hợp phức tạp có thể được chuyển cho admin xử lý.
