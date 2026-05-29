@@ -88,8 +88,47 @@ jobs:
 
             chmod 600 .env
 
+            cat > docker-compose.yml <<EOF
+            services:
+              wordpress:
+                image: ${DOCKERHUB_USERNAME}/b2b-oto:latest
+
+                container_name: sanoto-wordpress
+
+                restart: unless-stopped
+
+                extra_hosts:
+                  - "host.docker.internal:host-gateway"
+
+                env_file:
+                  - .env
+
+                environment:
+                  DB_HOST: host.docker.internal:3306
+                  DB_NAME: \${DB_NAME}
+                  DB_USER: \${DB_USER}
+                  DB_PASSWORD: \${DB_PASSWORD}
+
+                  WP_ENV: \${WP_ENV}
+                  WP_HOME: \${WP_HOME}
+                  WP_SITEURL: \${WP_SITEURL}
+
+                ports:
+                  - "8001:80"
+
+                volumes:
+                  - uploads_data:/var/www/html/web/app/uploads
+                  - cache_data:/var/www/html/web/app/cache
+
+            volumes:
+              uploads_data:
+              cache_data:
+            EOF
+
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
             docker compose pull wordpress
 
-            docker compose up -d wordpress
+            docker compose up -d
 
             docker image prune -f
