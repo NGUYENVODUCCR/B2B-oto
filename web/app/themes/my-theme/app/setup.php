@@ -14,8 +14,70 @@ use function Roots\bundle;
  * @return void
  */
 add_action('wp_enqueue_scripts', function () {
-    bundle('app')->enqueue();
+    $bundle = bundle('app')->enqueue();
+    $config = sprintf(
+        'window.B2B_CONFIG = %s;',
+        wp_json_encode([
+            'apiBase' => home_url('/wp-json/b2b/v1'),
+            'homeUrl' => home_url('/'),
+            'chatWsUrl' => apply_filters(
+                'b2b_chat_ws_url',
+                get_option('b2b_chat_ws_url', getenv('B2B_CHAT_WS_URL') ?: '')
+            ),
+        ])
+    );
+
+    $bundle->js(function ($handle) use ($config) {
+        wp_add_inline_script($handle, $config, 'before');
+    });
+    // AI Box (floating) assets
+    wp_enqueue_style(
+        'b2b-ai-chat',
+        get_theme_file_uri('/resources/styles/pages/ai-chat.css'),
+        [],
+        filemtime(get_theme_file_path('/resources/styles/pages/ai-chat.css'))
+    );
+
+    wp_enqueue_script(
+        'b2b-ai-chat',
+        get_theme_file_uri('/resources/scripts/pages/ai-chat.js'),
+        [],
+        filemtime(get_theme_file_path('/resources/scripts/pages/ai-chat.js')),
+        true
+    );
 }, 100);
+
+add_filter('script_loader_tag', function ($tag, $handle, $src) {
+    if ($handle !== 'b2b-ai-chat') {
+        return $tag;
+    }
+
+    return sprintf(
+        '<script type="module" src="%s" charset="UTF-8" id="%s-js"></script>',
+        esc_url($src),
+        esc_attr($handle)
+    );
+}, 10, 3);
+
+add_filter('query_vars', function ($vars) {
+    $vars[] = 'b2b_support_workspace';
+
+    return $vars;
+});
+
+add_action('init', function () {
+    add_rewrite_rule(
+        '^support-workspace/?$',
+        'index.php?pagename=support&b2b_support_workspace=1',
+        'top'
+    );
+
+    $rewriteVersion = '20260526';
+    if (get_option('b2b_support_workspace_rewrite_version') !== $rewriteVersion) {
+        flush_rewrite_rules(false);
+        update_option('b2b_support_workspace_rewrite_version', $rewriteVersion, false);
+    }
+}, 20);
 
 /**
  * Register the theme assets with the block editor.
