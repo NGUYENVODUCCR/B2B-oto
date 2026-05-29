@@ -1,13 +1,14 @@
-import domReady from '@roots/sage/client/dom-ready';
-
-/**
- * Application entrypoint
- */
-domReady(async () => {
-  // ...
-});
-
-/**
- * @see {@link https://webpack.js.org/api/hot-module-replacement/}
- */
-if (import.meta.webpackHot) import.meta.webpackHot.accept(console.error);
+import './components/navbar.js';
+import './components/profile-modal.js';
+import './pages/register.js';
+import './pages/login.js';
+import './pages/verify.js';
+import './pages/verify-otp.js';
+import './pages/forgot-password.js';
+import './pages/reset-password.js';
+import './pages/logout.js';
+import './pages/seller-request.js';
+import './pages/admin.js';
+import './pages/seller.js';
+import './pages/dashboard.js';
+import './pages/profile.js';
