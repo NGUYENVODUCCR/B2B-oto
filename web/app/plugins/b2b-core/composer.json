@@ -1,0 +1,14 @@
+{
+    "name": "duc/b2b-core",
+    "authors": [
+        {
+            "name": "Nguyen Vo Duc",
+            "email": "nguyenvoduc2004@gmail.com"
+        }
+    ],
+    "require": {
+        "firebase/php-jwt": "^7.0",
+        "phpmailer/phpmailer": "^7.0",
+        "cloudinary/cloudinary_php": "^3.1"
+    }
+}
