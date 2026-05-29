@@ -23,15 +23,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push WordPress image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/sanoto-wordpress:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/sanoto-wordpress:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/b2b-oto:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/b2b-oto:${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -44,19 +44,20 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+
           script: |
             set -e
 
             mkdir -p ${{ secrets.VPS_PROJECT_PATH }}
             cd ${{ secrets.VPS_PROJECT_PATH }}
 
-            cat > .env <<'EOF'
+            cat > .env <<EOF
             DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
 
-            MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
             DB_NAME=${{ secrets.DB_NAME }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_HOST=host.docker.internal:3306
 
             WP_ENV=${{ secrets.WP_ENV }}
             WP_HOME=${{ secrets.WP_HOME }}
@@ -88,5 +89,7 @@ jobs:
             chmod 600 .env
 
             docker compose pull wordpress
-            docker compose up -d db wordpress nginx
+
+            docker compose up -d wordpress
+
             docker image prune -f
