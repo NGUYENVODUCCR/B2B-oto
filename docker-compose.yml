@@ -47,10 +47,10 @@ services:
     ports:
       - "8001:80"
 
-    volumes:
-      - uploads_data:/var/www/html/web/app/uploads
-      - cache_data:/var/www/html/web/app/cache
-
+  volumes:
+    - ./.env:/var/www/html/.env:ro
+    - uploads_data:/var/www/html/web/app/uploads
+    - cache_data:/var/www/html/web/app/cache
 volumes:
   uploads_data:
   cache_data:
