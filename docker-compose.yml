@@ -1,32 +1,19 @@
 services:
-  db:
-    image: mariadb:11.4
-    container_name: sanoto-db
-    restart: unless-stopped
-    command: >
-      --character-set-server=utf8mb4
-      --collation-server=utf8mb4_unicode_ci
-      --max_allowed_packet=256M
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - db_data:/var/lib/mysql
-    networks:
-      - sanoto_network
-
   wordpress:
-    image: ${DOCKERHUB_USERNAME}/sanoto-wordpress:latest
+    image: ${DOCKERHUB_USERNAME}/b2b-oto:latest
+
     container_name: sanoto-wordpress
+
     restart: unless-stopped
-    depends_on:
-      - db
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
     env_file:
       - .env
+
     environment:
-      DB_HOST: db:3306
+      DB_HOST: host.docker.internal:3306
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -45,6 +32,7 @@ services:
       NONCE_SALT: ${NONCE_SALT}
 
       B2B_CASSO_WEBHOOK_TOKEN: ${B2B_CASSO_WEBHOOK_TOKEN}
+
       MAIL_HOST: ${MAIL_HOST}
       MAIL_PORT: ${MAIL_PORT}
       MAIL_USERNAME: ${MAIL_USERNAME}
@@ -55,30 +43,14 @@ services:
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+
+    ports:
+      - "8001:80"
+
     volumes:
       - uploads_data:/var/www/html/web/app/uploads
       - cache_data:/var/www/html/web/app/cache
-    networks:
-      - sanoto_network
-
-  nginx:
-    image: nginx:1.27-alpine
-    container_name: sanoto-nginx
-    restart: unless-stopped
-    depends_on:
-      - wordpress
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-    networks:
-      - sanoto_network
 
 volumes:
-  db_data:
   uploads_data:
   cache_data:
-
-networks:
-  sanoto_network:
-    driver: bridge
