@@ -1,0 +1,118 @@
+
+
+:root {
+  --primary-color: #e44d26;
+  --text-main: #333333;
+  --text-muted: #666666;
+  --border-color: #cccccc;
+  --bg-card: #ffffff;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+}
+
+.container.py-5 {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: var(--text-main);
+}
+
+
+.seller-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #eeeeee;
+  padding-bottom: 1rem;
+}
+
+.seller-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.seller-chat-alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #d9e1ea;
+  border-left: 4px solid #0f766e;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.seller-chat-alert strong {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.seller-chat-alert p {
+  margin: 0;
+  color: #667085;
+  font-size: 0.9rem;
+}
+
+.seller-chat-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+  color: #ffffff;
+  background: #0f766e;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+}
+
+.seller-chat-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.seller-channel-link {
+  background: #ffffff;
+  color: #0f766e;
+  border: 1px solid #0f766e;
+}
+
+.seller-chat-badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #e11d48;
+  color: #ffffff;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.seller-chat-badge.hidden {
+  display: none !important;
+}
+
+.btn-create-product {
+  background-color: var(--text-main);
+  color: #ffffff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-create-product:hover {
+  background-color: var(--primary-color);
+}
+

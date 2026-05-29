@@ -1,0 +1,155 @@
+.payment-page {
+  width: min(960px, calc(100vw - 32px));
+  margin: 32px auto;
+}
+
+.payment-card {
+  background: #ffffff;
+  border: 1px solid #d8e0ea;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+}
+
+.payment-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 18px;
+}
+
+.payment-card-head h1 {
+  font-size: 26px;
+  line-height: 1.2;
+  margin: 4px 0 0;
+}
+
+.payment-card-head strong {
+  color: #0f766e;
+  font-size: 22px;
+  white-space: nowrap;
+}
+
+.payment-kicker {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.payment-bank-logos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.payment-bank-logos span {
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 12px;
+}
+
+.payment-info {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.payment-info div {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.payment-info dt {
+  color: #64748b;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.payment-info dd {
+  color: #0f172a;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.payment-code {
+  color: #dc2626 !important;
+}
+
+.payment-qr {
+  margin: 22px 0;
+  text-align: center;
+}
+
+.payment-qr img {
+  width: min(320px, 100%);
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.payment-note {
+  color: #475569;
+  line-height: 1.6;
+}
+
+.payment-actions {
+  margin-top: 18px;
+}
+
+.payment-actions button {
+  background: #0f766e;
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 11px 16px;
+}
+
+.payment-status-box {
+  margin-top: 14px;
+}
+
+.payment-status,
+.payment-loading,
+.payment-error {
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.payment-status {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.payment-error {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.payment-loading {
+  background: #f8fafc;
+  color: #475569;
+}
+
+@media (max-width: 640px) {
+  .payment-card-head,
+  .payment-info {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-card-head {
+    flex-direction: column;
+  }
+
+  .payment-card-head strong {
+    white-space: normal;
+  }
+}

@@ -1,0 +1,608 @@
+.support-page {
+  padding: 28px 0 48px;
+}
+
+.support-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.support-header p,
+.support-ticket-kicker {
+  color: #0f766e;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.support-header h1 {
+  margin-top: 6px;
+  font-size: 30px;
+  color: #0f172a;
+}
+.support-actions .support-refund-button {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.support-actions .support-refund-button:hover {
+  background: #fecaca;
+}
+.support-header button,
+.support-form button,
+.support-reply-form button,
+.support-actions button {
+  border: 0;
+  border-radius: 8px;
+  background: #0f766e;
+  color: #fff;
+  font-weight: 700;
+  padding: 11px 16px;
+}
+
+.support-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.support-header-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #0f766e;
+  color: #ffffff;
+  font-weight: 700;
+  min-height: 42px;
+  padding: 10px 16px;
+  text-decoration: none;
+}
+
+.support-header-link-btn:hover {
+  background: #0b5f59;
+}
+
+.support-layout {
+  display: grid;
+  grid-template-columns: 360px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.support-admin-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.support-public-layout {
+  grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+}
+
+.support-panel {
+  background: #fff;
+  border: 1px solid #dbe3ef;
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+}
+
+.support-panel h2 {
+  margin: 0 0 16px;
+  color: #0f172a;
+  font-size: 20px;
+}
+
+.support-help-copy {
+  display: grid;
+  align-content: center;
+  min-height: 260px;
+  background:
+    linear-gradient(135deg, rgba(15, 118, 110, 0.94), rgba(29, 78, 216, 0.84)),
+    #0f766e;
+  color: #ffffff;
+}
+
+.support-help-copy p {
+  width: fit-content;
+  margin: 0 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  color: #dffdf7;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 6px 10px;
+  text-transform: uppercase;
+}
+
+.support-help-copy h2 {
+  color: #ffffff;
+}
+
+.support-help-copy div {
+  color: rgba(255, 255, 255, 0.86);
+  line-height: 1.6;
+}
+
+.support-form {
+  display: grid;
+  gap: 14px;
+}
+
+.support-form label {
+  display: grid;
+  gap: 7px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.support-form input,
+.support-form select,
+.support-form textarea,
+.support-reply-form input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 11px 12px;
+  font: inherit;
+}
+
+.support-form textarea {
+  resize: vertical;
+}
+
+.support-message {
+  min-height: 20px;
+  font-size: 14px;
+  color: #475569;
+}
+
+.support-message[data-type="success"] {
+  color: #0f766e;
+}
+
+.support-message[data-type="error"] {
+  color: #b91c1c;
+}
+
+.support-ticket-list {
+  display: grid;
+  gap: 12px;
+}
+
+.support-ticket {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.support-ticket-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.support-ticket h2 {
+  margin: 4px 0;
+  font-size: 18px;
+}
+
+.support-ticket p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.support-status {
+  align-self: flex-start;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 10px;
+  white-space: nowrap;
+}
+
+.support-status[data-status="resolved"],
+.support-status[data-status="closed"] {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.support-reply-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.support-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.support-actions button {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.support-payout-list {
+  display: grid;
+  gap: 12px;
+}
+
+.support-payout-card {
+  border: 1px solid #dbe3ef;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 14px;
+}
+
+.support-payout-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.support-payout-head h3 {
+  margin: 4px 0;
+  color: #0f172a;
+  font-size: 18px;
+}
+
+.support-payout-head p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.support-payout-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.support-payout-grid div {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 8px 10px;
+}
+
+.support-payout-grid span {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.support-payout-grid strong {
+  display: block;
+  color: #0f172a;
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+}
+
+.support-bulk-panel {
+  margin-top: 18px;
+}
+
+.support-bulk-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.support-bulk-title p {
+  margin: 0 0 4px;
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.support-bulk-title h2 {
+  margin: 0;
+}
+
+.support-bulk-title button,
+.bulk-actions button,
+.bulk-inline-form button {
+  border: 0;
+  border-radius: 8px;
+  background: #0f766e;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 800;
+  padding: 10px 14px;
+}
+
+.support-bulk-title button {
+  background: #edf1f5;
+  color: #334155;
+}
+
+.bulk-purchase-list {
+  display: grid;
+  gap: 14px;
+}
+
+.bulk-request-card {
+  border: 1px solid #dbe3ef;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 16px;
+}
+
+.bulk-request-card[data-status="fulfilled"] {
+  border-color: #0f766e;
+}
+
+.bulk-request-card[data-status="accepted"] {
+  border-color: #1d4ed8;
+}
+
+.bulk-request-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.bulk-request-head h2 {
+  margin: 4px 0;
+  color: #0f172a;
+  font-size: 20px;
+}
+
+.bulk-request-head p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.bulk-progress {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  background: #eff6ff;
+  margin: 14px 0;
+  padding: 10px 12px;
+}
+
+.bulk-progress span {
+  color: #1e40af;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.bulk-progress strong {
+  color: #0f172a;
+}
+
+.bulk-broadcast {
+  display: grid;
+  gap: 12px;
+}
+
+.bulk-broadcast > p {
+  border-left: 4px solid #0f766e;
+  background: #f0fdfa;
+  color: #0f172a;
+  line-height: 1.5;
+  margin: 0;
+  padding: 12px;
+}
+
+.bulk-product-info {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.bulk-product-info div,
+.bulk-offer-card,
+.bulk-contract-row {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fbfcfe;
+  padding: 10px;
+}
+
+.bulk-product-info span,
+.bulk-offer-card span,
+.bulk-contract-row span {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.bulk-product-info strong,
+.bulk-offer-card strong,
+.bulk-contract-row strong {
+  display: block;
+  color: #0f172a;
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+}
+
+.bulk-product-info-wide {
+  grid-column: 1 / -1;
+}
+
+.bulk-inline-form {
+  display: grid;
+  gap: 12px;
+  border: 1px solid #dbe3ef;
+  border-radius: 8px;
+  background: #f8fafc;
+  margin-top: 14px;
+  padding: 14px;
+}
+
+.bulk-inline-form h3,
+.bulk-section h3,
+.bulk-contract-list h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 16px;
+}
+
+.bulk-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.bulk-inline-form label {
+  display: grid;
+  gap: 6px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.bulk-inline-form input,
+.bulk-inline-form textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font: inherit;
+  padding: 10px 11px;
+}
+
+.bulk-inline-form textarea {
+  resize: vertical;
+}
+
+.bulk-section {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.bulk-offer-list {
+  display: grid;
+  gap: 8px;
+}
+
+.bulk-offer-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(100px, 0.5fr) minmax(130px, 0.7fr);
+  gap: 10px;
+}
+
+.bulk-offer-card p {
+  grid-column: 1 / -1;
+  color: #64748b;
+  margin: 0;
+}
+
+.bulk-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.bulk-actions button[data-bulk-action="accept"] {
+  background: #1d4ed8;
+}
+
+.bulk-actions button[data-bulk-action="send-buyer"] {
+  background: #b45309;
+}
+
+.bulk-actions button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.bulk-note-success {
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  background: #f0fdf4;
+  color: #047857;
+  font-weight: 800;
+  margin-top: 12px;
+  padding: 10px;
+}
+
+.bulk-contract-list {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 14px;
+  padding-top: 14px;
+}
+
+.bulk-contract-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.bulk-empty-inline {
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  color: #64748b;
+  padding: 12px;
+}
+
+.support-empty {
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 18px;
+  color: #64748b;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .support-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .support-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .support-reply-form {
+    grid-template-columns: 1fr;
+  }
+
+  .support-bulk-title,
+  .bulk-request-head,
+  .bulk-progress {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .support-payout-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .bulk-product-info,
+  .bulk-form-grid,
+  .bulk-offer-card,
+  .bulk-contract-row,
+  .support-payout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -1,0 +1,22 @@
+
+@media (max-width: 900px) {
+  .admin-modal-dialog, .admin-modal-dialog-wide {
+    width: 94%;
+    padding: 20px;
+  }
+  .admin-product-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .admin-form-grid, .admin-form-grid-two {
+    grid-template-columns: 1fr;
+  }
+  .admin-chat-wrapper {
+    flex-direction: column;
+    height: auto !important;
+  }
+  .admin-chat-sidebar {
+    width: 100% !important;
+    height: 200px !important;
+  }
+}

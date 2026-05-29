@@ -1,0 +1,148 @@
+.orders-page {
+  padding: 32px;
+}
+
+.orders-subtitle {
+  margin: 8px 0 20px;
+  color: #4b5563;
+}
+
+.orders-toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.orders-search-input {
+  min-width: 280px;
+  flex: 1;
+  max-width: 520px;
+  height: 42px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+.orders-search-btn,
+.orders-search-reset-btn {
+  height: 42px;
+  border: 0;
+  border-radius: 10px;
+  padding: 0 16px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.orders-search-btn {
+  background: #0f766e;
+  color: #fff;
+}
+
+.orders-search-reset-btn {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.orders-search-meta {
+  margin-bottom: 16px;
+  color: #334155;
+  font-size: 14px;
+}
+
+.order-card,
+.admin-stat-card,
+.seller-stat-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.order-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.order-head h3 {
+  margin: 0;
+}
+
+.order-status {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.order-status[data-status='completed'] {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.order-status[data-status='paid'],
+.order-status[data-status='delivering'] {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.order-status[data-status='cancelled'] {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.order-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px 14px;
+}
+
+.order-grid span {
+  display: block;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.order-grid strong {
+  display: block;
+  font-size: 14px;
+  color: #0f172a;
+  margin-top: 2px;
+  word-break: break-word;
+}
+
+.order-products {
+  margin: 12px 0;
+  color: #0f172a;
+}
+
+.order-actions button {
+  margin-right: 8px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #0f766e;
+  color: #fff;
+}
+
+.product-review-count {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #666;
+}
+
+.admin-stats-box,
+.seller-stats-box {
+  display: flex;
+  gap: 16px;
+  margin: 20px 0;
+}
