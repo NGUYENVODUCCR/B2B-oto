@@ -4,19 +4,28 @@ services:
     container_name: sanoto-wordpress
     restart: unless-stopped
 
-    entrypoint: ["/bin/sh", "-lc"]
-    command: >
-      mkdir -p
-      /var/www/html/web/app/uploads
-      /var/www/html/web/app/cache/acorn/framework/views
-      /var/www/html/web/app/cache/acorn/framework/cache
-      /var/www/html/web/app/cache/acorn/framework/sessions
-      &&
-      chown -R www-data:www-data
-      /var/www/html/web/app/uploads
-      /var/www/html/web/app/cache
-      &&
-      apache2-foreground
+    entrypoint: ["/bin/sh"]
+    command:
+      - "-c"
+      - |
+        set -e
+
+        test -f /deploy-env/app.env
+
+        cp /deploy-env/app.env /var/www/html/.env
+        chmod 644 /var/www/html/.env
+
+        mkdir -p \
+          /var/www/html/web/app/uploads \
+          /var/www/html/web/app/cache/acorn/framework/views \
+          /var/www/html/web/app/cache/acorn/framework/cache \
+          /var/www/html/web/app/cache/acorn/framework/sessions
+
+        chown -R www-data:www-data \
+          /var/www/html/web/app/uploads \
+          /var/www/html/web/app/cache
+
+        exec apache2-foreground
 
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -28,7 +37,7 @@ services:
       - "${APP_PORT:-8001}:80"
 
     volumes:
-      - ./app.env:/var/www/html/.env:ro
+      - /opt/sanoto-b2b:/deploy-env:ro
       - uploads_data:/var/www/html/web/app/uploads
       - cache_data:/var/www/html/web/app/cache
 
