@@ -51,6 +51,11 @@ jobs:
 
             PROJECT_PATH="${{ secrets.VPS_PROJECT_PATH }}"
 
+            if [ -z "$PROJECT_PATH" ]; then
+              echo "VPS_PROJECT_PATH is empty. Please set it to /opt/sanoto-b2b in GitHub Secrets."
+              exit 1
+            fi
+
             mkdir -p "$PROJECT_PATH"
             cd "$PROJECT_PATH"
 
@@ -65,6 +70,7 @@ jobs:
             cat > .compose.env <<'COMPOSE_ENV_EOF'
             DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             APP_PORT=${{ secrets.APP_PORT }}
+            PROJECT_PATH=${{ secrets.VPS_PROJECT_PATH }}
             COMPOSE_ENV_EOF
 
             echo "== Create runtime env =="
@@ -125,45 +131,71 @@ jobs:
             echo "== Create docker-compose.yml =="
             rm -f docker-compose.yml
 
-            printf '%s\n' 'services:' >> docker-compose.yml
-            printf '%s\n' '  wordpress:' >> docker-compose.yml
-            printf '%s\n' '    image: ${DOCKERHUB_USERNAME}/b2b-oto:latest' >> docker-compose.yml
-            printf '%s\n' '    container_name: sanoto-wordpress' >> docker-compose.yml
-            printf '%s\n' '    restart: unless-stopped' >> docker-compose.yml
-            printf '%s\n' '' >> docker-compose.yml
-            printf '%s\n' '    entrypoint: ["/bin/sh", "-c"]' >> docker-compose.yml
-            printf '%s\n' '    command:' >> docker-compose.yml
-            printf '%s\n' '      - >' >> docker-compose.yml
-            printf '%s\n' '        test -f /deploy-env/app.env &&' >> docker-compose.yml
-            printf '%s\n' '        cp /deploy-env/app.env /var/www/html/.env &&' >> docker-compose.yml
-            printf '%s\n' '        chmod 644 /var/www/html/.env &&' >> docker-compose.yml
-            printf '%s\n' '        mkdir -p' >> docker-compose.yml
-            printf '%s\n' '        /var/www/html/web/app/uploads' >> docker-compose.yml
-            printf '%s\n' '        /var/www/html/web/app/cache/acorn/framework/views' >> docker-compose.yml
-            printf '%s\n' '        /var/www/html/web/app/cache/acorn/framework/cache' >> docker-compose.yml
-            printf '%s\n' '        /var/www/html/web/app/cache/acorn/framework/sessions &&' >> docker-compose.yml
-            printf '%s\n' '        chown -R www-data:www-data' >> docker-compose.yml
-            printf '%s\n' '        /var/www/html/web/app/uploads' >> docker-compose.yml
-            printf '%s\n' '        /var/www/html/web/app/cache &&' >> docker-compose.yml
-            printf '%s\n' '        exec apache2-foreground' >> docker-compose.yml
-            printf '%s\n' '' >> docker-compose.yml
-            printf '%s\n' '    extra_hosts:' >> docker-compose.yml
-            printf '%s\n' '      - "host.docker.internal:host-gateway"' >> docker-compose.yml
-            printf '%s\n' '' >> docker-compose.yml
-            printf '%s\n' '    env_file:' >> docker-compose.yml
-            printf '%s\n' '      - ./runtime.env' >> docker-compose.yml
-            printf '%s\n' '' >> docker-compose.yml
-            printf '%s\n' '    ports:' >> docker-compose.yml
-            printf '%s\n' '      - "${APP_PORT:-8001}:80"' >> docker-compose.yml
-            printf '%s\n' '' >> docker-compose.yml
-            printf '%s\n' '    volumes:' >> docker-compose.yml
-            printf '%s\n' "      - ${PROJECT_PATH}:/deploy-env:ro" >> docker-compose.yml
-            printf '%s\n' '      - uploads_data:/var/www/html/web/app/uploads' >> docker-compose.yml
-            printf '%s\n' '      - cache_data:/var/www/html/web/app/cache' >> docker-compose.yml
-            printf '%s\n' '' >> docker-compose.yml
-            printf '%s\n' 'volumes:' >> docker-compose.yml
-            printf '%s\n' '  uploads_data:' >> docker-compose.yml
-            printf '%s\n' '  cache_data:' >> docker-compose.yml
+            cat > docker-compose.yml <<'DOCKER_COMPOSE_EOF'
+            services:
+              wordpress:
+                image: ${DOCKERHUB_USERNAME}/b2b-oto:latest
+                container_name: sanoto-wordpress
+                restart: unless-stopped
+
+                entrypoint: ["/bin/sh"]
+                command:
+                  - "-c"
+                  - |
+                    set -e
+
+                    test -f /deploy-env/app.env
+
+                    cp /deploy-env/app.env /var/www/html/.env
+                    chmod 644 /var/www/html/.env
+
+                    mkdir -p \
+                      /var/www/html/web/app/uploads \
+                      /var/www/html/web/app/cache/acorn/framework/views \
+                      /var/www/html/web/app/cache/acorn/framework/cache \
+                      /var/www/html/web/app/cache/acorn/framework/sessions
+
+                    chown -R www-data:www-data \
+                      /var/www/html/web/app/uploads \
+                      /var/www/html/web/app/cache
+
+                    cat > /var/www/html/web/.htaccess <<'HTACCESS_EOF'
+                    # BEGIN WordPress
+                    <IfModule mod_rewrite.c>
+                    RewriteEngine On
+                    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+                    RewriteBase /
+                    RewriteRule ^index\.php$ - [L]
+                    RewriteCond %{REQUEST_FILENAME} !-f
+                    RewriteCond %{REQUEST_FILENAME} !-d
+                    RewriteRule . /index.php [L]
+                    </IfModule>
+                    # END WordPress
+                    HTACCESS_EOF
+
+                    chown www-data:www-data /var/www/html/web/.htaccess
+                    chmod 644 /var/www/html/web/.htaccess
+
+                    exec apache2-foreground
+
+                extra_hosts:
+                  - "host.docker.internal:host-gateway"
+
+                env_file:
+                  - ./runtime.env
+
+                ports:
+                  - "${APP_PORT:-8001}:80"
+
+                volumes:
+                  - ${PROJECT_PATH}:/deploy-env:ro
+                  - uploads_data:/var/www/html/web/app/uploads
+                  - cache_data:/var/www/html/web/app/cache
+
+            volumes:
+              uploads_data:
+              cache_data:
+            DOCKER_COMPOSE_EOF
 
             echo "== Show generated docker-compose.yml =="
             cat -n docker-compose.yml
@@ -207,7 +239,7 @@ jobs:
             fi
 
             echo "== Recreate container =="
-            docker compose --env-file .compose.env up -d --remove-orphans wordpress
+            docker compose --env-file .compose.env up -d --force-recreate --remove-orphans wordpress
 
             echo "== Cleanup =="
             docker image prune -f || true
