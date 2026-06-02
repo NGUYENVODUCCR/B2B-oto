@@ -65,31 +65,31 @@ jobs:
             COMPOSE_ENV_EOF
 
             echo "== Create app env =="
-            cat > .env <<'APP_ENV_EOF'
-            DB_NAME=${{ secrets.DB_NAME }}
-            DB_USER=${{ secrets.DB_USER }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            DB_HOST=${{ secrets.DB_HOST }}
+            cat > app.env <<'APP_ENV_EOF'
+            DB_NAME='${{ secrets.DB_NAME }}'
+            DB_USER='${{ secrets.DB_USER }}'
+            DB_PASSWORD='${{ secrets.DB_PASSWORD }}'
+            DB_HOST='${{ secrets.DB_HOST }}'
 
-            WP_ENV=${{ secrets.WP_ENV }}
-            WP_HOME=${{ secrets.WP_HOME }}
-            WP_SITEURL=${{ secrets.WP_SITEURL }}
+            WP_ENV='${{ secrets.WP_ENV }}'
+            WP_HOME='${{ secrets.WP_HOME }}'
+            WP_SITEURL='${{ secrets.WP_SITEURL }}'
 
-            MAIL_HOST=${{ secrets.MAIL_HOST }}
-            MAIL_PORT=${{ secrets.MAIL_PORT }}
-            MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
-            MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
-            MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}
-            MAIL_FROM_NAME="${{ secrets.MAIL_FROM_NAME }}"
+            MAIL_HOST='${{ secrets.MAIL_HOST }}'
+            MAIL_PORT='${{ secrets.MAIL_PORT }}'
+            MAIL_USERNAME='${{ secrets.MAIL_USERNAME }}'
+            MAIL_PASSWORD='${{ secrets.MAIL_PASSWORD }}'
+            MAIL_FROM_ADDRESS='${{ secrets.MAIL_FROM_ADDRESS }}'
+            MAIL_FROM_NAME='${{ secrets.MAIL_FROM_NAME }}'
 
-            SMS_TOKEN=${{ secrets.SMS_TOKEN }}
-            SMS_SENDER=${{ secrets.SMS_SENDER }}
+            SMS_TOKEN='${{ secrets.SMS_TOKEN }}'
+            SMS_SENDER='${{ secrets.SMS_SENDER }}'
 
-            CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
-            CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
-            CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
+            CLOUDINARY_CLOUD_NAME='${{ secrets.CLOUDINARY_CLOUD_NAME }}'
+            CLOUDINARY_API_KEY='${{ secrets.CLOUDINARY_API_KEY }}'
+            CLOUDINARY_API_SECRET='${{ secrets.CLOUDINARY_API_SECRET }}'
 
-            B2B_CASSO_WEBHOOK_TOKEN=${{ secrets.B2B_CASSO_WEBHOOK_TOKEN }}
+            B2B_CASSO_WEBHOOK_TOKEN='${{ secrets.B2B_CASSO_WEBHOOK_TOKEN }}'
 
             AUTH_KEY='${{ secrets.AUTH_KEY }}'
             SECURE_AUTH_KEY='${{ secrets.SECURE_AUTH_KEY }}'
@@ -101,39 +101,37 @@ jobs:
             NONCE_SALT='${{ secrets.NONCE_SALT }}'
             APP_ENV_EOF
 
-            chmod 600 .compose.env .env
+            chmod 600 .compose.env app.env
 
             echo "== Create docker-compose.yml =="
-            cat > docker-compose.yml <<'COMPOSE_YAML_EOF'
-            services:
-              wordpress:
-                image: ${DOCKERHUB_USERNAME}/b2b-oto:latest
-                container_name: sanoto-wordpress
-                restart: unless-stopped
+            {
+              printf '%s\n' 'services:'
+              printf '%s\n' '  wordpress:'
+              printf '%s\n' '    image: ${DOCKERHUB_USERNAME}/b2b-oto:latest'
+              printf '%s\n' '    container_name: sanoto-wordpress'
+              printf '%s\n' '    restart: unless-stopped'
+              printf '%s\n' ''
+              printf '%s\n' '    extra_hosts:'
+              printf '%s\n' '      - "host.docker.internal:host-gateway"'
+              printf '%s\n' ''
+              printf '%s\n' '    env_file:'
+              printf '%s\n' '      - app.env'
+              printf '%s\n' ''
+              printf '%s\n' '    ports:'
+              printf '%s\n' '      - "${APP_PORT:-8001}:80"'
+              printf '%s\n' ''
+              printf '%s\n' '    volumes:'
+              printf '%s\n' '      - ./app.env:/var/www/html/.env:ro'
+              printf '%s\n' '      - uploads_data:/var/www/html/web/app/uploads'
+              printf '%s\n' '      - cache_data:/var/www/html/web/app/cache'
+              printf '%s\n' ''
+              printf '%s\n' 'volumes:'
+              printf '%s\n' '  uploads_data:'
+              printf '%s\n' '  cache_data:'
+            } > docker-compose.yml
 
-                extra_hosts:
-                  - "host.docker.internal:host-gateway"
-
-                env_file:
-                  - .env
-
-                ports:
-                  - "${APP_PORT:-8001}:80"
-
-                volumes:
-                  - ./.env:/var/www/html/.env:ro
-                  - uploads_data:/var/www/html/web/app/uploads
-                  - cache_data:/var/www/html/web/app/cache
-
-            volumes:
-              uploads_data:
-              cache_data:
-            COMPOSE_YAML_EOF
-
-            echo "== Show generated files =="
-            ls -la
-            echo "compose env lines: $(wc -l < .compose.env)"
-            echo "app env lines: $(wc -l < .env)"
+            echo "== Show generated docker-compose.yml =="
+            cat -n docker-compose.yml
 
             echo "== Docker login =="
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
