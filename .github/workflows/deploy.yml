@@ -64,32 +64,37 @@ jobs:
             APP_PORT=${{ secrets.APP_PORT }}
             COMPOSE_ENV_EOF
 
-            echo "== Create app env =="
-            cat > app.env <<'APP_ENV_EOF'
-            DB_NAME='${{ secrets.DB_NAME }}'
-            DB_USER='${{ secrets.DB_USER }}'
-            DB_PASSWORD='${{ secrets.DB_PASSWORD }}'
-            DB_HOST='${{ secrets.DB_HOST }}'
+                        echo "== Create runtime env =="
+                        cat > runtime.env <<'RUNTIME_ENV_EOF'
+            DB_NAME=${{ secrets.DB_NAME }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_HOST=${{ secrets.DB_HOST }}
 
-            WP_ENV='${{ secrets.WP_ENV }}'
-            WP_HOME='${{ secrets.WP_HOME }}'
-            WP_SITEURL='${{ secrets.WP_SITEURL }}'
+            WP_ENV=${{ secrets.WP_ENV }}
+            WP_HOME=${{ secrets.WP_HOME }}
+            WP_SITEURL=${{ secrets.WP_SITEURL }}
 
-            MAIL_HOST='${{ secrets.MAIL_HOST }}'
-            MAIL_PORT='${{ secrets.MAIL_PORT }}'
-            MAIL_USERNAME='${{ secrets.MAIL_USERNAME }}'
-            MAIL_PASSWORD='${{ secrets.MAIL_PASSWORD }}'
-            MAIL_FROM_ADDRESS='${{ secrets.MAIL_FROM_ADDRESS }}'
-            MAIL_FROM_NAME='${{ secrets.MAIL_FROM_NAME }}'
+            MAIL_HOST=${{ secrets.MAIL_HOST }}
+            MAIL_PORT=${{ secrets.MAIL_PORT }}
+            MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
+            MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
+            MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}
+            MAIL_FROM_NAME=${{ secrets.MAIL_FROM_NAME }}
 
-            SMS_TOKEN='${{ secrets.SMS_TOKEN }}'
-            SMS_SENDER='${{ secrets.SMS_SENDER }}'
+            SMS_TOKEN=${{ secrets.SMS_TOKEN }}
+            SMS_SENDER=${{ secrets.SMS_SENDER }}
 
-            CLOUDINARY_CLOUD_NAME='${{ secrets.CLOUDINARY_CLOUD_NAME }}'
-            CLOUDINARY_API_KEY='${{ secrets.CLOUDINARY_API_KEY }}'
-            CLOUDINARY_API_SECRET='${{ secrets.CLOUDINARY_API_SECRET }}'
+            CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
+            CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
+            CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
 
-            B2B_CASSO_WEBHOOK_TOKEN='${{ secrets.B2B_CASSO_WEBHOOK_TOKEN }}'
+            B2B_CASSO_WEBHOOK_TOKEN=${{ secrets.B2B_CASSO_WEBHOOK_TOKEN }}
+            RUNTIME_ENV_EOF
+
+                        echo "== Create app env for Bedrock =="
+                        cat runtime.env > app.env
+                        cat >> app.env <<'APP_ENV_EOF'
 
             AUTH_KEY='${{ secrets.AUTH_KEY }}'
             SECURE_AUTH_KEY='${{ secrets.SECURE_AUTH_KEY }}'
@@ -101,34 +106,34 @@ jobs:
             NONCE_SALT='${{ secrets.NONCE_SALT }}'
             APP_ENV_EOF
 
-            chmod 600 .compose.env app.env
+            chmod 600 .compose.env runtime.env app.env
 
             echo "== Create docker-compose.yml =="
-            {
-              printf '%s\n' 'services:'
-              printf '%s\n' '  wordpress:'
-              printf '%s\n' '    image: ${DOCKERHUB_USERNAME}/b2b-oto:latest'
-              printf '%s\n' '    container_name: sanoto-wordpress'
-              printf '%s\n' '    restart: unless-stopped'
-              printf '%s\n' ''
-              printf '%s\n' '    extra_hosts:'
-              printf '%s\n' '      - "host.docker.internal:host-gateway"'
-              printf '%s\n' ''
-              printf '%s\n' '    env_file:'
-              printf '%s\n' '      - app.env'
-              printf '%s\n' ''
-              printf '%s\n' '    ports:'
-              printf '%s\n' '      - "${APP_PORT:-8001}:80"'
-              printf '%s\n' ''
-              printf '%s\n' '    volumes:'
-              printf '%s\n' '      - ./app.env:/var/www/html/.env:ro'
-              printf '%s\n' '      - uploads_data:/var/www/html/web/app/uploads'
-              printf '%s\n' '      - cache_data:/var/www/html/web/app/cache'
-              printf '%s\n' ''
-              printf '%s\n' 'volumes:'
-              printf '%s\n' '  uploads_data:'
-              printf '%s\n' '  cache_data:'
-            } > docker-compose.yml
+            rm -f docker-compose.yml
+
+            printf '%s\n' 'services:' >> docker-compose.yml
+            printf '%s\n' '  wordpress:' >> docker-compose.yml
+            printf '%s\n' '    image: ${DOCKERHUB_USERNAME}/b2b-oto:latest' >> docker-compose.yml
+            printf '%s\n' '    container_name: sanoto-wordpress' >> docker-compose.yml
+            printf '%s\n' '    restart: unless-stopped' >> docker-compose.yml
+            printf '%s\n' '' >> docker-compose.yml
+            printf '%s\n' '    extra_hosts:' >> docker-compose.yml
+            printf '%s\n' '      - "host.docker.internal:host-gateway"' >> docker-compose.yml
+            printf '%s\n' '' >> docker-compose.yml
+            printf '%s\n' '    env_file:' >> docker-compose.yml
+            printf '%s\n' '      - runtime.env' >> docker-compose.yml
+            printf '%s\n' '' >> docker-compose.yml
+            printf '%s\n' '    ports:' >> docker-compose.yml
+            printf '%s\n' '      - "${APP_PORT:-8001}:80"' >> docker-compose.yml
+            printf '%s\n' '' >> docker-compose.yml
+            printf '%s\n' '    volumes:' >> docker-compose.yml
+            printf '%s\n' '      - ./app.env:/var/www/html/.env:ro' >> docker-compose.yml
+            printf '%s\n' '      - uploads_data:/var/www/html/web/app/uploads' >> docker-compose.yml
+            printf '%s\n' '      - cache_data:/var/www/html/web/app/cache' >> docker-compose.yml
+            printf '%s\n' '' >> docker-compose.yml
+            printf '%s\n' 'volumes:' >> docker-compose.yml
+            printf '%s\n' '  uploads_data:' >> docker-compose.yml
+            printf '%s\n' '  cache_data:' >> docker-compose.yml
 
             echo "== Show generated docker-compose.yml =="
             cat -n docker-compose.yml
@@ -148,8 +153,17 @@ jobs:
             echo "== Cleanup =="
             docker image prune -f || true
 
-            echo "== Check container status =="
-            docker ps --filter "name=sanoto-wordpress"
+            echo "== Wait and check container status =="
+            sleep 10
+            docker ps -a --filter "name=sanoto-wordpress"
+
+            echo "== Container logs =="
+            docker logs --tail=160 sanoto-wordpress || true
 
             echo "== Check important env in container =="
-            docker exec sanoto-wordpress bash -lc 'printenv | grep -E "DB_HOST|WP_HOME|WP_SITEURL|SMS_TOKEN|SMS_SENDER|MAIL_USERNAME|CLOUDINARY_CLOUD_NAME" || true'
+            if docker ps --filter "name=sanoto-wordpress" --filter "status=running" | grep -q sanoto-wordpress; then
+              docker exec sanoto-wordpress sh -lc 'printenv | grep -E "DB_HOST|WP_HOME|WP_SITEURL|SMS_TOKEN|SMS_SENDER|MAIL_USERNAME|CLOUDINARY_CLOUD_NAME" || true'
+            else
+              echo "Container is not running. See logs above."
+              exit 1
+            fi
