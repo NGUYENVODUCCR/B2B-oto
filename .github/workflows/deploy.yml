@@ -110,48 +110,48 @@ jobs:
             chmod 600 .env app.env
 
             cat > docker-compose.yml <<'COMPOSE_YAML_EOF'
-services:
-  wordpress:
-    image: ${DOCKERHUB_USERNAME}/b2b-oto:latest
-    container_name: sanoto-wordpress
-    restart: unless-stopped
+            services:
+              wordpress:
+                image: ${DOCKERHUB_USERNAME}/b2b-oto:latest
+                container_name: sanoto-wordpress
+                restart: unless-stopped
 
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+                extra_hosts:
+                  - "host.docker.internal:host-gateway"
 
-    env_file:
-      - app.env
+                env_file:
+                  - app.env
 
-    ports:
-      - "${APP_PORT:-8001}:80"
+                ports:
+                  - "${APP_PORT:-8001}:80"
 
-    volumes:
-      - ./app.env:/var/www/html/.env:ro
-      - uploads_data:/var/www/html/web/app/uploads
-      - cache_data:/var/www/html/web/app/cache
+                volumes:
+                  - ./app.env:/var/www/html/.env:ro
+                  - uploads_data:/var/www/html/web/app/uploads
+                  - cache_data:/var/www/html/web/app/cache
 
-        volumes:
-          uploads_data:
-          cache_data:
-        COMPOSE_YAML_EOF
+                    volumes:
+                      uploads_data:
+                      cache_data:
+                    COMPOSE_YAML_EOF
 
-            echo "== Login Docker Hub =="
-            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+                        echo "== Login Docker Hub =="
+                        echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-            echo "== Validate docker-compose.yml =="
-            docker compose --env-file .env config
+                        echo "== Validate docker-compose.yml =="
+                        docker compose --env-file .env config
 
-            echo "== Pull latest image =="
-            docker compose --env-file .env pull wordpress
+                        echo "== Pull latest image =="
+                        docker compose --env-file .env pull wordpress
 
-            echo "== Recreate wordpress container =="
-            docker compose --env-file .env up -d --force-recreate wordpress
+                        echo "== Recreate wordpress container =="
+                        docker compose --env-file .env up -d --force-recreate wordpress
 
-            echo "== Clean unused images =="
-            docker image prune -f || true
+                        echo "== Clean unused images =="
+                        docker image prune -f || true
 
-            echo "== Check running containers =="
-            docker ps
+                        echo "== Check running containers =="
+                        docker ps
 
-            echo "== Check important env inside container =="
-            docker exec sanoto-wordpress bash -lc 'printenv | grep -E "DB_HOST|WP_HOME|WP_SITEURL|SMS_TOKEN|SMS_SENDER|MAIL_USERNAME|CLOUDINARY_CLOUD_NAME" || true'
+                        echo "== Check important env inside container =="
+                        docker exec sanoto-wordpress bash -lc 'printenv | grep -E "DB_HOST|WP_HOME|WP_SITEURL|SMS_TOKEN|SMS_SENDER|MAIL_USERNAME|CLOUDINARY_CLOUD_NAME" || true'
