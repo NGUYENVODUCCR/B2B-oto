@@ -111,9 +111,16 @@ RUN { \
         echo "opcache.revalidate_freq=0"; \
         echo "opcache.validate_timestamps=0"; \
     } > /usr/local/etc/php/conf.d/zz-sanoto.ini
-    
+
 RUN cat > /etc/apache2/conf-available/bedrock.conf <<'EOF'
 <Directory /var/www/html/web>
+    Options FollowSymLinks
+    AllowOverride All
+    Require all granted
+</Directory>
+
+<Directory /var/www/html/web/wp>
+    Options FollowSymLinks
     AllowOverride All
     Require all granted
 </Directory>
@@ -133,11 +140,33 @@ COPY --from=theme_assets /theme/public /var/www/html/web/app/themes/my-theme/pub
 
 RUN mkdir -p \
     /var/www/html/web/app/uploads \
-    /var/www/html/web/app/cache \
+    /var/www/html/web/app/cache/acorn/framework/views \
+    /var/www/html/web/app/cache/acorn/framework/cache \
+    /var/www/html/web/app/cache/acorn/framework/sessions \
     && chown -R www-data:www-data /var/www/html
+
+RUN cat > /usr/local/bin/sanoto-entrypoint <<'EOF'
+#!/usr/bin/env bash
+set -e
+
+mkdir -p \
+  /var/www/html/web/app/uploads \
+  /var/www/html/web/app/cache/acorn/framework/views \
+  /var/www/html/web/app/cache/acorn/framework/cache \
+  /var/www/html/web/app/cache/acorn/framework/sessions
+
+chown -R www-data:www-data \
+  /var/www/html/web/app/uploads \
+  /var/www/html/web/app/cache
+
+exec "$@"
+EOF
+
+RUN chmod +x /usr/local/bin/sanoto-entrypoint
 
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -f http://localhost || exit 1
 
 EXPOSE 80
 
+ENTRYPOINT ["sanoto-entrypoint"]
 CMD ["apache2-foreground"]

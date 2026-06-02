@@ -44,16 +44,28 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-
+          script_stop: true
+          command_timeout: 30m
           script: |
-            set -e
+            set -Eeuo pipefail
 
-            mkdir -p ${{ secrets.VPS_PROJECT_PATH }}
-            cd ${{ secrets.VPS_PROJECT_PATH }}
+            PROJECT_PATH="${{ secrets.VPS_PROJECT_PATH }}"
 
-            cat > .env <<EOF
+            mkdir -p "$PROJECT_PATH"
+            cd "$PROJECT_PATH"
+
+            echo "== Docker version =="
+            docker --version
+            docker compose version
+
+            echo "== Create compose env =="
+            cat > .compose.env <<'COMPOSE_ENV_EOF'
             DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            APP_PORT=${{ secrets.APP_PORT }}
+            COMPOSE_ENV_EOF
 
+            echo "== Create app env =="
+            cat > .env <<'APP_ENV_EOF'
             DB_NAME=${{ secrets.DB_NAME }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
@@ -63,38 +75,40 @@ jobs:
             WP_HOME=${{ secrets.WP_HOME }}
             WP_SITEURL=${{ secrets.WP_SITEURL }}
 
-            AUTH_KEY=${{ secrets.AUTH_KEY }}
-            SECURE_AUTH_KEY=${{ secrets.SECURE_AUTH_KEY }}
-            LOGGED_IN_KEY=${{ secrets.LOGGED_IN_KEY }}
-            NONCE_KEY=${{ secrets.NONCE_KEY }}
-            AUTH_SALT=${{ secrets.AUTH_SALT }}
-            SECURE_AUTH_SALT=${{ secrets.SECURE_AUTH_SALT }}
-            LOGGED_IN_SALT=${{ secrets.LOGGED_IN_SALT }}
-            NONCE_SALT=${{ secrets.NONCE_SALT }}
+            AUTH_KEY='${{ secrets.AUTH_KEY }}'
+            SECURE_AUTH_KEY='${{ secrets.SECURE_AUTH_KEY }}'
+            LOGGED_IN_KEY='${{ secrets.LOGGED_IN_KEY }}'
+            NONCE_KEY='${{ secrets.NONCE_KEY }}'
+            AUTH_SALT='${{ secrets.AUTH_SALT }}'
+            SECURE_AUTH_SALT='${{ secrets.SECURE_AUTH_SALT }}'
+            LOGGED_IN_SALT='${{ secrets.LOGGED_IN_SALT }}'
+            NONCE_SALT='${{ secrets.NONCE_SALT }}'
 
             B2B_CASSO_WEBHOOK_TOKEN=${{ secrets.B2B_CASSO_WEBHOOK_TOKEN }}
 
             MAIL_HOST=${{ secrets.MAIL_HOST }}
             MAIL_PORT=${{ secrets.MAIL_PORT }}
             MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
-            MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
+            MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
             MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}
-            MAIL_FROM_NAME=${{ secrets.MAIL_FROM_NAME }}
+            MAIL_FROM_NAME="${{ secrets.MAIL_FROM_NAME }}"
+
+            SMS_TOKEN=${{ secrets.SMS_TOKEN }}
+            SMS_SENDER=${{ secrets.SMS_SENDER }}
 
             CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
             CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
             CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
-            EOF
+            APP_ENV_EOF
 
-            chmod 600 .env
+            chmod 600 .compose.env .env
 
-            cat > docker-compose.yml <<EOF
+            echo "== Create docker-compose.yml =="
+            cat > docker-compose.yml <<'COMPOSE_YAML_EOF'
             services:
               wordpress:
-                image: \${DOCKERHUB_USERNAME}/b2b-oto:latest
-
+                image: ${DOCKERHUB_USERNAME}/b2b-oto:latest
                 container_name: sanoto-wordpress
-
                 restart: unless-stopped
 
                 extra_hosts:
@@ -103,32 +117,36 @@ jobs:
                 env_file:
                   - .env
 
-                environment:
-                  DB_HOST: ${DB_HOST}
-                  DB_NAME: \${DB_NAME}
-                  DB_USER: \${DB_USER}
-                  DB_PASSWORD: \${DB_PASSWORD}
-
-                  WP_ENV: \${WP_ENV}
-                  WP_HOME: \${WP_HOME}
-                  WP_SITEURL: \${WP_SITEURL}
-
                 ports:
-                  - "8001:80"
+                  - "${APP_PORT:-8001}:80"
 
                 volumes:
+                  - ./.env:/var/www/html/.env:ro
                   - uploads_data:/var/www/html/web/app/uploads
                   - cache_data:/var/www/html/web/app/cache
 
             volumes:
               uploads_data:
               cache_data:
-            EOF
+            COMPOSE_YAML_EOF
 
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+                        echo "== Docker login =="
+                        echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-            docker compose pull wordpress
+                        echo "== Validate compose =="
+                        docker compose --env-file .compose.env config >/dev/null
 
-            docker compose up -d
+                        echo "== Pull image =="
+                        docker compose --env-file .compose.env pull wordpress
 
-            docker image prune -f
+                        echo "== Recreate container =="
+                        docker compose --env-file .compose.env up -d --force-recreate --remove-orphans wordpress
+
+                        echo "== Cleanup =="
+                        docker image prune -f || true
+
+                        echo "== Check container status =="
+                        docker ps --filter "name=sanoto-wordpress"
+
+                        echo "== Check env in container =="
+                        docker exec sanoto-wordpress bash -lc 'printenv | grep -E "DB_HOST|WP_HOME|WP_SITEURL|SMS_TOKEN|SMS_SENDER|MAIL_USERNAME|CLOUDINARY_CLOUD_NAME" || true'
