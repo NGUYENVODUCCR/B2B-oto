@@ -26,13 +26,17 @@ class Sms {
         $starts = [
             "[B2B-MARKETPLACE] Ma OTP cua ban la $otp.",
             "[B2B-MARKETPLACE] Ma xac thuc cua ban: $otp.",
+            "[B2B-MARKETPLACE] Ma xac minh tai khoan duoc cung cap: $otp.",
             "[B2B-MARKETPLACE] Day la ma bao mat cua ban: $otp.",
             "[B2B-MARKETPLACE] Su dung ma $otp de xac minh.",
+            "[B2B-MARKETPLACE] Ma $otp nay chi de xac minh tai khoan.",
         ];
     
         $ends = [
             "Ma co hieu luc trong 15 phut.",
+            "Ma se het han sau 15 phut.",
             "Vui long khong chia se ma nay.",
+            "Vui long dung ma nay de tiep tuc xac minh tai khoan.",
             "Hay nhap ma de tiep tuc dang ky.",
             "Bao mat tai khoan cua ban bang cach giu kin ma nay.",
             "Neu khong phai ban yeu cau, vui long bo qua tin nhan nay.",
