@@ -21,14 +21,37 @@ class Sms {
         return $phone;
     }
 
+    private static function generateOtpMessage($otp)
+    {
+        $starts = [
+            "[B2B-MARKETPLACE] Ma OTP cua ban la $otp.",
+            "[B2B-MARKETPLACE] Ma xac thuc cua ban: $otp.",
+            "[B2B-MARKETPLACE] Day la ma bao mat cua ban: $otp.",
+            "[B2B-MARKETPLACE] Su dung ma $otp de xac minh.",
+        ];
+    
+        $ends = [
+            "Ma co hieu luc trong 15 phut.",
+            "Vui long khong chia se ma nay.",
+            "Hay nhap ma de tiep tuc dang ky.",
+            "Bao mat tai khoan cua ban bang cach giu kin ma nay.",
+            "Neu khong phai ban yeu cau, vui long bo qua tin nhan nay.",
+        ];
+    
+        return
+            $starts[random_int(0, count($starts) - 1)] .
+            ' ' .
+            $ends[random_int(0, count($ends) - 1)];
+    }
+
     public static function sendOtpByPhone($toPhone, $otp) {
         $config = self::config();
         $formattedPhone = self::formatPhone($toPhone);
-        $content = "[B2B-MARKETPLACE] Ma OTP cua ban la $otp. Ma co hieu luc trong 15 phut.";
+        $content = self::generateOtpMessage($otp);
+        $ref = strtoupper(bin2hex(random_bytes(3)));
+        $content .= " Ref:$ref - sanotob2b.com";
     
-        
         $url = "http://api.speedsms.vn/index.php/sms/send";
-    
         
         $data = [
             'to' => [$formattedPhone],
