@@ -64,8 +64,8 @@ jobs:
             APP_PORT=${{ secrets.APP_PORT }}
             COMPOSE_ENV_EOF
 
-                        echo "== Create runtime env =="
-                        cat > runtime.env <<'RUNTIME_ENV_EOF'
+            echo "== Create runtime env =="
+            cat > runtime.env <<'RUNTIME_ENV_EOF'
             DB_NAME=${{ secrets.DB_NAME }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
@@ -92,9 +92,9 @@ jobs:
             B2B_CASSO_WEBHOOK_TOKEN=${{ secrets.B2B_CASSO_WEBHOOK_TOKEN }}
             RUNTIME_ENV_EOF
 
-                        echo "== Create app env for Bedrock =="
-                        cat runtime.env > app.env
-                        cat >> app.env <<'APP_ENV_EOF'
+            echo "== Create app env for Bedrock =="
+            cat runtime.env > app.env
+            cat >> app.env <<'APP_ENV_EOF'
 
             AUTH_KEY='${{ secrets.AUTH_KEY }}'
             SECURE_AUTH_KEY='${{ secrets.SECURE_AUTH_KEY }}'
@@ -152,13 +152,6 @@ jobs:
 
             echo "== Cleanup =="
             docker image prune -f || true
-
-            echo "== Wait and check container status =="
-            sleep 10
-            docker ps -a --filter "name=sanoto-wordpress"
-
-            echo "== Container logs =="
-            docker logs --tail=160 sanoto-wordpress || true
 
             echo "== Wait and check container status =="
             sleep 10
