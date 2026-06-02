@@ -145,28 +145,28 @@ RUN mkdir -p \
     /var/www/html/web/app/cache/acorn/framework/sessions \
     && chown -R www-data:www-data /var/www/html
 
-RUN cat > /usr/local/bin/sanoto-entrypoint <<'EOF'
-#!/usr/bin/env bash
-set -e
-
-mkdir -p \
-  /var/www/html/web/app/uploads \
-  /var/www/html/web/app/cache/acorn/framework/views \
-  /var/www/html/web/app/cache/acorn/framework/cache \
-  /var/www/html/web/app/cache/acorn/framework/sessions
-
-chown -R www-data:www-data \
-  /var/www/html/web/app/uploads \
-  /var/www/html/web/app/cache
-
-exec "$@"
-EOF
-
-RUN chmod +x /usr/local/bin/sanoto-entrypoint
+RUN printf '%s\n' \
+    '#!/bin/sh' \
+    'set -e' \
+    '' \
+    'mkdir -p \' \
+    '  /var/www/html/web/app/uploads \' \
+    '  /var/www/html/web/app/cache/acorn/framework/views \' \
+    '  /var/www/html/web/app/cache/acorn/framework/cache \' \
+    '  /var/www/html/web/app/cache/acorn/framework/sessions' \
+    '' \
+    'chown -R www-data:www-data \' \
+    '  /var/www/html/web/app/uploads \' \
+    '  /var/www/html/web/app/cache' \
+    '' \
+    'exec "$@"' \
+    > /usr/local/bin/sanoto-entrypoint \
+    && sed -i 's/\r$//' /usr/local/bin/sanoto-entrypoint \
+    && chmod +x /usr/local/bin/sanoto-entrypoint
 
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -f http://localhost || exit 1
 
 EXPOSE 80
 
-ENTRYPOINT ["sanoto-entrypoint"]
+ENTRYPOINT ["/usr/local/bin/sanoto-entrypoint"]
 CMD ["apache2-foreground"]

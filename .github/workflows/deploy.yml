@@ -160,6 +160,16 @@ jobs:
             echo "== Container logs =="
             docker logs --tail=160 sanoto-wordpress || true
 
+            echo "== Wait and check container status =="
+            sleep 10
+            docker ps -a --filter "name=sanoto-wordpress"
+
+            echo "== Container logs =="
+            docker logs --tail=200 sanoto-wordpress || true
+
+            echo "== Inspect container command =="
+            docker inspect sanoto-wordpress --format='Entrypoint={{json .Config.Entrypoint}} Cmd={{json .Config.Cmd}} ExitCode={{.State.ExitCode}} Error={{.State.Error}}' || true
+
             echo "== Check important env in container =="
             if docker ps --filter "name=sanoto-wordpress" --filter "status=running" | grep -q sanoto-wordpress; then
               docker exec sanoto-wordpress sh -lc 'printenv | grep -E "DB_HOST|WP_HOME|WP_SITEURL|SMS_TOKEN|SMS_SENDER|MAIL_USERNAME|CLOUDINARY_CLOUD_NAME" || true'
