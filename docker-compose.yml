@@ -1,36 +1,39 @@
 services:
   wordpress:
     image: ${DOCKERHUB_USERNAME}/b2b-oto:latest
-
     container_name: sanoto-wordpress
-
     restart: unless-stopped
+
+    # Cho container truy cập MySQL đang chạy trực tiếp trên VPS qua host.docker.internal nếu cần.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
     env_file:
       - .env
 
     environment:
+      # Database
       DB_HOST: ${DB_HOST}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
 
+      # WordPress / Bedrock
       WP_ENV: ${WP_ENV}
       WP_HOME: ${WP_HOME}
       WP_SITEURL: ${WP_SITEURL}
 
+      # WordPress salts
       AUTH_KEY: ${AUTH_KEY}
       SECURE_AUTH_KEY: ${SECURE_AUTH_KEY}
       LOGGED_IN_KEY: ${LOGGED_IN_KEY}
       NONCE_KEY: ${NONCE_KEY}
-
       AUTH_SALT: ${AUTH_SALT}
       SECURE_AUTH_SALT: ${SECURE_AUTH_SALT}
       LOGGED_IN_SALT: ${LOGGED_IN_SALT}
       NONCE_SALT: ${NONCE_SALT}
 
-      B2B_CASSO_WEBHOOK_TOKEN: ${B2B_CASSO_WEBHOOK_TOKEN}
-
+      # Mail
       MAIL_HOST: ${MAIL_HOST}
       MAIL_PORT: ${MAIL_PORT}
       MAIL_USERNAME: ${MAIL_USERNAME}
@@ -38,14 +41,24 @@ services:
       MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS}
       MAIL_FROM_NAME: ${MAIL_FROM_NAME}
 
+      # SpeedSMS OTP
+      SMS_TOKEN: ${SMS_TOKEN}
+      SMS_SENDER: ${SMS_SENDER}
+
+      # Cloudinary
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
 
+      # Casso webhook
+      B2B_CASSO_WEBHOOK_TOKEN: ${B2B_CASSO_WEBHOOK_TOKEN}
+
     ports:
-      - "8001:80"
+      - "${APP_PORT:-8001}:80"
 
     volumes:
+      # Bedrock/PHP dotenv vẫn đọc được file .env trong /var/www/html
+      - ./.env:/var/www/html/.env:ro
       - uploads_data:/var/www/html/web/app/uploads
       - cache_data:/var/www/html/web/app/cache
 
