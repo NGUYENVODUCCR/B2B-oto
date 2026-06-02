@@ -106,7 +106,7 @@ jobs:
             NONCE_SALT='${{ secrets.NONCE_SALT }}'
             APP_ENV_EOF
 
-            chmod 600 .compose.env runtime.env app.env
+            chmod 644 .compose.env runtime.env app.env
 
             echo "== Create docker-compose.yml =="
             rm -f docker-compose.yml
