@@ -44,16 +44,15 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          script_stop: true
+
           script: |
-            set -euo pipefail
+            set -e
 
-            mkdir -p "${{ secrets.VPS_PROJECT_PATH }}"
-            cd "${{ secrets.VPS_PROJECT_PATH }}"
+            mkdir -p ${{ secrets.VPS_PROJECT_PATH }}
+            cd ${{ secrets.VPS_PROJECT_PATH }}
 
-            cat > .env <<'ENVEOF'
+            cat > .env <<EOF
             DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
-            APP_PORT=${{ secrets.APP_PORT }}
 
             DB_NAME=${{ secrets.DB_NAME }}
             DB_USER=${{ secrets.DB_USER }}
@@ -64,22 +63,6 @@ jobs:
             WP_HOME=${{ secrets.WP_HOME }}
             WP_SITEURL=${{ secrets.WP_SITEURL }}
 
-            MAIL_HOST=${{ secrets.MAIL_HOST }}
-            MAIL_PORT=${{ secrets.MAIL_PORT }}
-            MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
-            MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
-            MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}
-            MAIL_FROM_NAME="${{ secrets.MAIL_FROM_NAME }}"
-
-            SMS_TOKEN=${{ secrets.SMS_TOKEN }}
-            SMS_SENDER=${{ secrets.SMS_SENDER }}
-
-            CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
-            CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
-            CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
-
-            B2B_CASSO_WEBHOOK_TOKEN=${{ secrets.B2B_CASSO_WEBHOOK_TOKEN }}
-
             AUTH_KEY=${{ secrets.AUTH_KEY }}
             SECURE_AUTH_KEY=${{ secrets.SECURE_AUTH_KEY }}
             LOGGED_IN_KEY=${{ secrets.LOGGED_IN_KEY }}
@@ -88,25 +71,70 @@ jobs:
             SECURE_AUTH_SALT=${{ secrets.SECURE_AUTH_SALT }}
             LOGGED_IN_SALT=${{ secrets.LOGGED_IN_SALT }}
             NONCE_SALT=${{ secrets.NONCE_SALT }}
-            ENVEOF
 
-                        chmod 600 .env
+            B2B_CASSO_WEBHOOK_TOKEN=${{ secrets.B2B_CASSO_WEBHOOK_TOKEN }}
 
-                        cat > docker-compose.yml <<'COMPOSEEOF'
+            MAIL_HOST=${{ secrets.MAIL_HOST }}
+            MAIL_PORT=${{ secrets.MAIL_PORT }}
+            MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
+            MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
+            MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}
+            MAIL_FROM_NAME=${{ secrets.MAIL_FROM_NAME }}
+
+            CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
+            CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
+            CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
+            EOF
+
+            chmod 600 .env
+
+            cat > docker-compose.yml <<EOF
             services:
               wordpress:
-                image: ${DOCKERHUB_USERNAME}/b2b-oto:latest
-                container_name: sanoto-wordpress
-                restart: unless-stopped
+                image: \${DOCKERHUB_USERNAME}/b2b-oto:latest
 
-                extra_hosts:
-                  - "host.docker.internal:host-gateway"
+                container_name: sanoto-wordpress
+
+                restart: unless-stopped
 
                 env_file:
                   - .env
 
+                environment:
+                  DB_HOST: \${DB_HOST}
+                  DB_NAME: \${DB_NAME}
+                  DB_USER: \${DB_USER}
+                  DB_PASSWORD: \${DB_PASSWORD}
+
+                  WP_ENV: \${WP_ENV}
+                  WP_HOME: \${WP_HOME}
+                  WP_SITEURL: \${WP_SITEURL}
+
+                  AUTH_KEY: \${AUTH_KEY}
+                  SECURE_AUTH_KEY: \${SECURE_AUTH_KEY}
+                  LOGGED_IN_KEY: \${LOGGED_IN_KEY}
+                  NONCE_KEY: \${NONCE_KEY}
+
+                  AUTH_SALT: \${AUTH_SALT}
+                  SECURE_AUTH_SALT: \${SECURE_AUTH_SALT}
+                  LOGGED_IN_SALT: \${LOGGED_IN_SALT}
+                  NONCE_SALT: \${NONCE_SALT}
+
+                  B2B_CASSO_WEBHOOK_TOKEN: \${B2B_CASSO_WEBHOOK_TOKEN}
+
+                  MAIL_HOST: \${MAIL_HOST}
+                  MAIL_PORT: \${MAIL_PORT}
+                  MAIL_USERNAME: \${MAIL_USERNAME}
+                  MAIL_PASSWORD: \${MAIL_PASSWORD}
+                  MAIL_FROM_ADDRESS: \${MAIL_FROM_ADDRESS}
+                  MAIL_FROM_NAME: \${MAIL_FROM_NAME}
+
+                  CLOUDINARY_CLOUD_NAME: \${CLOUDINARY_CLOUD_NAME}
+                  CLOUDINARY_API_KEY: \${CLOUDINARY_API_KEY}
+                  CLOUDINARY_API_SECRET: \${CLOUDINARY_API_SECRET}
+
                 ports:
-                  - "${APP_PORT:-8001}:80"
+                  - "8001:80"
 
                 volumes:
                   - uploads_data:/var/www/html/web/app/uploads
@@ -115,13 +143,12 @@ jobs:
             volumes:
               uploads_data:
               cache_data:
-            COMPOSEEOF
+            EOF
 
-            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
-            docker compose config >/dev/null
             docker compose pull wordpress
-            docker compose up -d --force-recreate wordpress
-            docker image prune -f
 
-            docker exec sanoto-wordpress bash -lc 'printenv | grep -E "DB_HOST|WP_HOME|WP_SITEURL|SMS_TOKEN|SMS_SENDER|MAIL_USERNAME|CLOUDINARY_CLOUD_NAME" || true'
+            docker compose up -d
+
+            docker image prune -f

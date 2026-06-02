@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.7
+
 FROM composer:2 AS bedrock_vendor
 
 WORKDIR /app
@@ -109,16 +111,17 @@ RUN { \
         echo "opcache.revalidate_freq=0"; \
         echo "opcache.validate_timestamps=0"; \
     } > /usr/local/etc/php/conf.d/zz-sanoto.ini
-
-RUN cat > /etc/apache2/conf-available/bedrock.conf <<'EOF_APACHE'
+    
+RUN cat > /etc/apache2/conf-available/bedrock.conf <<'EOF'
 <Directory /var/www/html/web>
     AllowOverride All
     Require all granted
 </Directory>
-EOF_APACHE
+EOF
 
-RUN a2enconf bedrock \
-    && echo "ServerName localhost" >> /etc/apache2/apache2.conf
+RUN a2enconf bedrock
+
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 RUN curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp \
     && chmod +x /usr/local/bin/wp
@@ -130,32 +133,11 @@ COPY --from=theme_assets /theme/public /var/www/html/web/app/themes/my-theme/pub
 
 RUN mkdir -p \
     /var/www/html/web/app/uploads \
-    /var/www/html/web/app/cache/acorn/framework/views \
-    /var/www/html/web/app/cache/acorn/framework/cache \
-    /var/www/html/web/app/cache/acorn/framework/sessions \
+    /var/www/html/web/app/cache \
     && chown -R www-data:www-data /var/www/html
 
-RUN cat > /usr/local/bin/sanoto-entrypoint <<'EOF_ENTRYPOINT'
-set -e
-
-mkdir -p \
-  /var/www/html/web/app/uploads \
-  /var/www/html/web/app/cache/acorn/framework/views \
-  /var/www/html/web/app/cache/acorn/framework/cache \
-  /var/www/html/web/app/cache/acorn/framework/sessions
-
-chown -R www-data:www-data \
-  /var/www/html/web/app/uploads \
-  /var/www/html/web/app/cache
-
-exec "$@"
-EOF_ENTRYPOINT
-
-RUN chmod +x /usr/local/bin/sanoto-entrypoint
-
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -fsS http://localhost/ > /dev/null || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -f http://localhost || exit 1
 
 EXPOSE 80
 
-ENTRYPOINT ["sanoto-entrypoint"]
 CMD ["apache2-foreground"]

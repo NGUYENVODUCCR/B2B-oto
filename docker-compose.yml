@@ -1,11 +1,10 @@
 services:
   wordpress:
     image: ${DOCKERHUB_USERNAME}/b2b-oto:latest
-    container_name: sanoto-wordpress
-    restart: unless-stopped
 
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    container_name: sanoto-wordpress
+
+    restart: unless-stopped
 
     env_file:
       - .env
@@ -24,10 +23,13 @@ services:
       SECURE_AUTH_KEY: ${SECURE_AUTH_KEY}
       LOGGED_IN_KEY: ${LOGGED_IN_KEY}
       NONCE_KEY: ${NONCE_KEY}
+
       AUTH_SALT: ${AUTH_SALT}
       SECURE_AUTH_SALT: ${SECURE_AUTH_SALT}
       LOGGED_IN_SALT: ${LOGGED_IN_SALT}
       NONCE_SALT: ${NONCE_SALT}
+
+      B2B_CASSO_WEBHOOK_TOKEN: ${B2B_CASSO_WEBHOOK_TOKEN}
 
       MAIL_HOST: ${MAIL_HOST}
       MAIL_PORT: ${MAIL_PORT}
@@ -36,20 +38,14 @@ services:
       MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS}
       MAIL_FROM_NAME: ${MAIL_FROM_NAME}
 
-      SMS_TOKEN: ${SMS_TOKEN}
-      SMS_SENDER: ${SMS_SENDER}
-
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
 
-      B2B_CASSO_WEBHOOK_TOKEN: ${B2B_CASSO_WEBHOOK_TOKEN}
-
     ports:
-      - "${APP_PORT:-8001}:80"
+      - "8001:80"
 
     volumes:
-      - ./.env:/var/www/html/.env:ro
       - uploads_data:/var/www/html/web/app/uploads
       - cache_data:/var/www/html/web/app/cache
 
