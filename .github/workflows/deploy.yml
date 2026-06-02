@@ -44,7 +44,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          script_stop: true
+          script_stop: false
           command_timeout: 30m
           script: |
             set -Eeuo pipefail
@@ -54,46 +54,49 @@ jobs:
             mkdir -p "$PROJECT_PATH"
             cd "$PROJECT_PATH"
 
+            unset DRONE_SSH_PREV_COMMAND_EXIT_CODE || true
+            rm -f .env
+
             echo "== Docker version =="
             docker --version
             docker compose version
 
             echo "== Create compose env =="
             cat > .compose.env <<'COMPOSE_ENV_EOF'
-            DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
-            APP_PORT=${{ secrets.APP_PORT }}
+            DOCKERHUB_USERNAME='${{ secrets.DOCKERHUB_USERNAME }}'
+            APP_PORT='${{ secrets.APP_PORT }}'
             COMPOSE_ENV_EOF
 
             echo "== Create runtime env =="
             cat > runtime.env <<'RUNTIME_ENV_EOF'
-            DB_NAME=${{ secrets.DB_NAME }}
-            DB_USER=${{ secrets.DB_USER }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            DB_HOST=${{ secrets.DB_HOST }}
+            DB_NAME='${{ secrets.DB_NAME }}'
+            DB_USER='${{ secrets.DB_USER }}'
+            DB_PASSWORD='${{ secrets.DB_PASSWORD }}'
+            DB_HOST='${{ secrets.DB_HOST }}'
 
-            WP_ENV=${{ secrets.WP_ENV }}
-            WP_HOME=${{ secrets.WP_HOME }}
-            WP_SITEURL=${{ secrets.WP_SITEURL }}
+            WP_ENV='${{ secrets.WP_ENV }}'
+            WP_HOME='${{ secrets.WP_HOME }}'
+            WP_SITEURL='${{ secrets.WP_SITEURL }}'
 
-            MAIL_HOST=${{ secrets.MAIL_HOST }}
-            MAIL_PORT=${{ secrets.MAIL_PORT }}
-            MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
-            MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
-            MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}
-            MAIL_FROM_NAME=${{ secrets.MAIL_FROM_NAME }}
+            MAIL_HOST='${{ secrets.MAIL_HOST }}'
+            MAIL_PORT='${{ secrets.MAIL_PORT }}'
+            MAIL_USERNAME='${{ secrets.MAIL_USERNAME }}'
+            MAIL_PASSWORD='${{ secrets.MAIL_PASSWORD }}'
+            MAIL_FROM_ADDRESS='${{ secrets.MAIL_FROM_ADDRESS }}'
+            MAIL_FROM_NAME='${{ secrets.MAIL_FROM_NAME }}'
 
-            SMS_TOKEN=${{ secrets.SMS_TOKEN }}
-            SMS_SENDER=${{ secrets.SMS_SENDER }}
+            SMS_TOKEN='${{ secrets.SMS_TOKEN }}'
+            SMS_SENDER='${{ secrets.SMS_SENDER }}'
 
-            CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
-            CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
-            CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
+            CLOUDINARY_CLOUD_NAME='${{ secrets.CLOUDINARY_CLOUD_NAME }}'
+            CLOUDINARY_API_KEY='${{ secrets.CLOUDINARY_API_KEY }}'
+            CLOUDINARY_API_SECRET='${{ secrets.CLOUDINARY_API_SECRET }}'
 
-            B2B_CASSO_WEBHOOK_TOKEN=${{ secrets.B2B_CASSO_WEBHOOK_TOKEN }}
+            B2B_CASSO_WEBHOOK_TOKEN='${{ secrets.B2B_CASSO_WEBHOOK_TOKEN }}'
             RUNTIME_ENV_EOF
 
             echo "== Create app env for Bedrock =="
-            cat runtime.env > app.env
+            cp runtime.env app.env
             cat >> app.env <<'APP_ENV_EOF'
 
             AUTH_KEY='${{ secrets.AUTH_KEY }}'
@@ -106,7 +109,17 @@ jobs:
             NONCE_SALT='${{ secrets.NONCE_SALT }}'
             APP_ENV_EOF
 
+            echo "== Sanitize env files =="
+            sed -i '/DRONE_SSH_PREV_COMMAND_EXIT_CODE/d' .compose.env runtime.env app.env 2>/dev/null || true
+            sed -i '/PREV_COMMAND_EXIT_CODE/d' .compose.env runtime.env app.env 2>/dev/null || true
+            sed -i '/\$? ; if \[/d' .compose.env runtime.env app.env 2>/dev/null || true
             chmod 644 .compose.env runtime.env app.env
+
+            echo "== Verify env files are clean =="
+            if grep -RniE 'DRONE_SSH|PREV_COMMAND|\$\? ; if' .compose.env runtime.env app.env 2>/dev/null; then
+              echo "Dirty env content detected. Stop deploy."
+              exit 1
+            fi
 
             echo "== Create docker-compose.yml =="
             rm -f docker-compose.yml
@@ -119,12 +132,12 @@ jobs:
             printf '%s\n' '' >> docker-compose.yml
             printf '%s\n' '    entrypoint: ["/bin/sh", "-lc"]' >> docker-compose.yml
             printf '%s\n' '    command: >' >> docker-compose.yml
-            printf '%s\n' '      "mkdir -p /var/www/html/web/app/uploads' >> docker-compose.yml
+            printf '%s\n' '      mkdir -p /var/www/html/web/app/uploads' >> docker-compose.yml
             printf '%s\n' '      /var/www/html/web/app/cache/acorn/framework/views' >> docker-compose.yml
             printf '%s\n' '      /var/www/html/web/app/cache/acorn/framework/cache' >> docker-compose.yml
             printf '%s\n' '      /var/www/html/web/app/cache/acorn/framework/sessions' >> docker-compose.yml
             printf '%s\n' '      && chown -R www-data:www-data /var/www/html/web/app/uploads /var/www/html/web/app/cache' >> docker-compose.yml
-            printf '%s\n' '      && apache2-foreground"' >> docker-compose.yml
+            printf '%s\n' '      && apache2-foreground' >> docker-compose.yml
             printf '%s\n' '' >> docker-compose.yml
             printf '%s\n' '    extra_hosts:' >> docker-compose.yml
             printf '%s\n' '      - "host.docker.internal:host-gateway"' >> docker-compose.yml
@@ -136,7 +149,7 @@ jobs:
             printf '%s\n' '      - "${APP_PORT:-8001}:80"' >> docker-compose.yml
             printf '%s\n' '' >> docker-compose.yml
             printf '%s\n' '    volumes:' >> docker-compose.yml
-            printf '%s\n' '      - ./app.env:/var/www/html/.env:ro' >> docker-compose.yml
+            printf '%s\n' "      - ${PROJECT_PATH}/app.env:/var/www/html/.env:ro" >> docker-compose.yml
             printf '%s\n' '      - uploads_data:/var/www/html/web/app/uploads' >> docker-compose.yml
             printf '%s\n' '      - cache_data:/var/www/html/web/app/cache' >> docker-compose.yml
             printf '%s\n' '' >> docker-compose.yml
@@ -206,9 +219,13 @@ jobs:
 
             echo "== Check /var/www/html/.env in container =="
             if docker ps --filter "name=sanoto-wordpress" --filter "status=running" | grep -q sanoto-wordpress; then
-              docker exec sanoto-wordpress sh -lc 'ls -la /var/www/html/.env && head -n 10 /var/www/html/.env'
-              docker exec sanoto-wordpress sh -lc 'printenv | grep -E "DB_HOST|WP_HOME|WP_SITEURL|SMS_TOKEN|SMS_SENDER|MAIL_USERNAME|CLOUDINARY_CLOUD_NAME" || true'
+              docker exec sanoto-wordpress sh -lc 'ls -la /var/www/html/.env'
+              docker exec sanoto-wordpress sh -lc 'grep -n "DRONE\|PREV_COMMAND\|\$? ; if" /var/www/html/.env && exit 1 || echo "OK: container .env clean"'
+              docker exec sanoto-wordpress sh -lc "grep -E '^(DB_NAME|DB_USER|DB_HOST|WP_ENV|WP_HOME|WP_SITEURL|SMS_TOKEN|SMS_SENDER)=' /var/www/html/.env | sed 's/=.*/=***MASKED***/'"
             else
               echo "Container is not running. See logs above."
               exit 1
             fi
+
+            echo "== Final HTTP test =="
+            curl -I http://127.0.0.1:8001 || true
