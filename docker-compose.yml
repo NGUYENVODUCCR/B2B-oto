@@ -6,20 +6,23 @@ services:
 
     entrypoint: ["/bin/sh", "-lc"]
     command: >
-      mkdir -p /var/www/html/web/app/uploads
+      mkdir -p
+      /var/www/html/web/app/uploads
       /var/www/html/web/app/cache/acorn/framework/views
       /var/www/html/web/app/cache/acorn/framework/cache
       /var/www/html/web/app/cache/acorn/framework/sessions
-      && chown -R www-data:www-data
+      &&
+      chown -R www-data:www-data
       /var/www/html/web/app/uploads
       /var/www/html/web/app/cache
-      && apache2-foreground
+      &&
+      apache2-foreground
 
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
     env_file:
-      - runtime.env
+      - ./runtime.env
 
     ports:
       - "${APP_PORT:-8001}:80"
