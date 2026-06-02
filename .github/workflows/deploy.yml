@@ -40,63 +40,75 @@ jobs:
     steps:
       - name: Deploy to VPS by SSH
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+
+          WP_ENV: ${{ secrets.WP_ENV }}
+          WP_HOME: ${{ secrets.WP_HOME }}
+          WP_SITEURL: ${{ secrets.WP_SITEURL }}
+
+          AUTH_KEY: ${{ secrets.AUTH_KEY }}
+          SECURE_AUTH_KEY: ${{ secrets.SECURE_AUTH_KEY }}
+          LOGGED_IN_KEY: ${{ secrets.LOGGED_IN_KEY }}
+          NONCE_KEY: ${{ secrets.NONCE_KEY }}
+
+          AUTH_SALT: ${{ secrets.AUTH_SALT }}
+          SECURE_AUTH_SALT: ${{ secrets.SECURE_AUTH_SALT }}
+          LOGGED_IN_SALT: ${{ secrets.LOGGED_IN_SALT }}
+          NONCE_SALT: ${{ secrets.NONCE_SALT }}
+
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
 
-          script: |
-            set -e
+          envs: DOCKERHUB_USERNAME,DB_NAME,DB_USER,DB_PASSWORD,DB_HOST,WP_ENV,WP_HOME,WP_SITEURL,AUTH_KEY,SECURE_AUTH_KEY,LOGGED_IN_KEY,NONCE_KEY,AUTH_SALT,SECURE_AUTH_SALT,LOGGED_IN_SALT,NONCE_SALT,MAIL_USERNAME,MAIL_PASSWORD,CLOUDINARY_CLOUD_NAME,CLOUDINARY_API_KEY,CLOUDINARY_API_SECRET
 
-            mkdir -p ${{ secrets.VPS_PROJECT_PATH }}
+          script: |
             cd ${{ secrets.VPS_PROJECT_PATH }}
 
-            rm -f .env
+            cat > .env <<'EOF'
+            DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME
 
-            printf '%s\n' "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> .env
+            DB_NAME=$DB_NAME
+            DB_USER=$DB_USER
+            DB_PASSWORD=$DB_PASSWORD
+            DB_HOST=$DB_HOST
 
-            printf '%s\n' "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-            printf '%s\n' "DB_USER=${{ secrets.DB_USER }}" >> .env
-            printf '%s\n' "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-            printf '%s\n' "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+            WP_ENV=$WP_ENV
+            WP_HOME=$WP_HOME
+            WP_SITEURL=$WP_SITEURL
 
-            printf '%s\n' "WP_ENV=${{ secrets.WP_ENV }}" >> .env
-            printf '%s\n' "WP_HOME=${{ secrets.WP_HOME }}" >> .env
-            printf '%s\n' "WP_SITEURL=${{ secrets.WP_SITEURL }}" >> .env
+            AUTH_KEY=$AUTH_KEY
+            SECURE_AUTH_KEY=$SECURE_AUTH_KEY
+            LOGGED_IN_KEY=$LOGGED_IN_KEY
+            NONCE_KEY=$NONCE_KEY
 
-            printf '%s\n' "AUTH_KEY=${{ secrets.AUTH_KEY }}" >> .env
-            printf '%s\n' "SECURE_AUTH_KEY=${{ secrets.SECURE_AUTH_KEY }}" >> .env
-            printf '%s\n' "LOGGED_IN_KEY=${{ secrets.LOGGED_IN_KEY }}" >> .env
-            printf '%s\n' "NONCE_KEY=${{ secrets.NONCE_KEY }}" >> .env
+            AUTH_SALT=$AUTH_SALT
+            SECURE_AUTH_SALT=$SECURE_AUTH_SALT
+            LOGGED_IN_SALT=$LOGGED_IN_SALT
+            NONCE_SALT=$NONCE_SALT
 
-            printf '%s\n' "AUTH_SALT=${{ secrets.AUTH_SALT }}" >> .env
-            printf '%s\n' "SECURE_AUTH_SALT=${{ secrets.SECURE_AUTH_SALT }}" >> .env
-            printf '%s\n' "LOGGED_IN_SALT=${{ secrets.LOGGED_IN_SALT }}" >> .env
-            printf '%s\n' "NONCE_SALT=${{ secrets.NONCE_SALT }}" >> .env
+            MAIL_USERNAME=$MAIL_USERNAME
+            MAIL_PASSWORD=$MAIL_PASSWORD
 
-            printf '%s\n' "B2B_CASSO_WEBHOOK_TOKEN=${{ secrets.B2B_CASSO_WEBHOOK_TOKEN }}" >> .env
-
-            printf '%s\n' "MAIL_HOST=${{ secrets.MAIL_HOST }}" >> .env
-            printf '%s\n' "MAIL_PORT=${{ secrets.MAIL_PORT }}" >> .env
-            printf '%s\n' "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> .env
-            printf '%s\n' "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> .env
-            printf '%s\n' "MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}" >> .env
-            printf '%s\n' "MAIL_FROM_NAME=${{ secrets.MAIL_FROM_NAME }}" >> .env
-
-            printf '%s\n' "CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}" >> .env
-            printf '%s\n' "CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}" >> .env
-            printf '%s\n' "CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}" >> .env
-
-            chmod 600 .env
-
-            docker login \
-              -u ${{ secrets.DOCKERHUB_USERNAME }} \
-              -p ${{ secrets.DOCKERHUB_TOKEN }}
-
-            docker compose pull
+            CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME
+            CLOUDINARY_API_KEY=$CLOUDINARY_API_KEY
+            CLOUDINARY_API_SECRET=$CLOUDINARY_API_SECRET
+            EOF
 
             docker compose down
-
+            docker compose pull
             docker compose up -d
-
-            docker image prune -f
