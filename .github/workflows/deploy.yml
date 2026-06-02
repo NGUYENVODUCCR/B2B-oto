@@ -63,8 +63,8 @@ jobs:
 
             echo "== Create compose env =="
             cat > .compose.env <<'COMPOSE_ENV_EOF'
-            DOCKERHUB_USERNAME='${{ secrets.DOCKERHUB_USERNAME }}'
-            APP_PORT='${{ secrets.APP_PORT }}'
+            DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            APP_PORT=${{ secrets.APP_PORT }}
             COMPOSE_ENV_EOF
 
             echo "== Create runtime env =="
@@ -97,6 +97,7 @@ jobs:
 
             echo "== Create app env for Bedrock =="
             cp runtime.env app.env
+
             cat >> app.env <<'APP_ENV_EOF'
 
             AUTH_KEY='${{ secrets.AUTH_KEY }}'
@@ -130,26 +131,33 @@ jobs:
             printf '%s\n' '    container_name: sanoto-wordpress' >> docker-compose.yml
             printf '%s\n' '    restart: unless-stopped' >> docker-compose.yml
             printf '%s\n' '' >> docker-compose.yml
-            printf '%s\n' '    entrypoint: ["/bin/sh", "-lc"]' >> docker-compose.yml
-            printf '%s\n' '    command: >' >> docker-compose.yml
-            printf '%s\n' '      mkdir -p /var/www/html/web/app/uploads' >> docker-compose.yml
-            printf '%s\n' '      /var/www/html/web/app/cache/acorn/framework/views' >> docker-compose.yml
-            printf '%s\n' '      /var/www/html/web/app/cache/acorn/framework/cache' >> docker-compose.yml
-            printf '%s\n' '      /var/www/html/web/app/cache/acorn/framework/sessions' >> docker-compose.yml
-            printf '%s\n' '      && chown -R www-data:www-data /var/www/html/web/app/uploads /var/www/html/web/app/cache' >> docker-compose.yml
-            printf '%s\n' '      && apache2-foreground' >> docker-compose.yml
+            printf '%s\n' '    entrypoint: ["/bin/sh", "-c"]' >> docker-compose.yml
+            printf '%s\n' '    command:' >> docker-compose.yml
+            printf '%s\n' '      - >' >> docker-compose.yml
+            printf '%s\n' '        test -f /deploy-env/app.env &&' >> docker-compose.yml
+            printf '%s\n' '        cp /deploy-env/app.env /var/www/html/.env &&' >> docker-compose.yml
+            printf '%s\n' '        chmod 644 /var/www/html/.env &&' >> docker-compose.yml
+            printf '%s\n' '        mkdir -p' >> docker-compose.yml
+            printf '%s\n' '        /var/www/html/web/app/uploads' >> docker-compose.yml
+            printf '%s\n' '        /var/www/html/web/app/cache/acorn/framework/views' >> docker-compose.yml
+            printf '%s\n' '        /var/www/html/web/app/cache/acorn/framework/cache' >> docker-compose.yml
+            printf '%s\n' '        /var/www/html/web/app/cache/acorn/framework/sessions &&' >> docker-compose.yml
+            printf '%s\n' '        chown -R www-data:www-data' >> docker-compose.yml
+            printf '%s\n' '        /var/www/html/web/app/uploads' >> docker-compose.yml
+            printf '%s\n' '        /var/www/html/web/app/cache &&' >> docker-compose.yml
+            printf '%s\n' '        exec apache2-foreground' >> docker-compose.yml
             printf '%s\n' '' >> docker-compose.yml
             printf '%s\n' '    extra_hosts:' >> docker-compose.yml
             printf '%s\n' '      - "host.docker.internal:host-gateway"' >> docker-compose.yml
             printf '%s\n' '' >> docker-compose.yml
             printf '%s\n' '    env_file:' >> docker-compose.yml
-            printf '%s\n' '      - runtime.env' >> docker-compose.yml
+            printf '%s\n' '      - ./runtime.env' >> docker-compose.yml
             printf '%s\n' '' >> docker-compose.yml
             printf '%s\n' '    ports:' >> docker-compose.yml
             printf '%s\n' '      - "${APP_PORT:-8001}:80"' >> docker-compose.yml
             printf '%s\n' '' >> docker-compose.yml
             printf '%s\n' '    volumes:' >> docker-compose.yml
-            printf '%s\n' "      - ${PROJECT_PATH}/app.env:/var/www/html/.env:ro" >> docker-compose.yml
+            printf '%s\n' "      - ${PROJECT_PATH}:/deploy-env:ro" >> docker-compose.yml
             printf '%s\n' '      - uploads_data:/var/www/html/web/app/uploads' >> docker-compose.yml
             printf '%s\n' '      - cache_data:/var/www/html/web/app/cache' >> docker-compose.yml
             printf '%s\n' '' >> docker-compose.yml
