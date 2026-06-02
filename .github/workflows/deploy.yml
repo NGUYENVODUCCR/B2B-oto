@@ -51,103 +51,51 @@ jobs:
             mkdir -p ${{ secrets.VPS_PROJECT_PATH }}
             cd ${{ secrets.VPS_PROJECT_PATH }}
 
-            cat > .env <<EOF
-            DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            rm -f .env
 
-            DB_NAME=${{ secrets.DB_NAME }}
-            DB_USER=${{ secrets.DB_USER }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            DB_HOST=${{ secrets.DB_HOST }}
+            printf '%s\n' "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> .env
 
-            WP_ENV=${{ secrets.WP_ENV }}
-            WP_HOME=${{ secrets.WP_HOME }}
-            WP_SITEURL=${{ secrets.WP_SITEURL }}
+            printf '%s\n' "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+            printf '%s\n' "DB_USER=${{ secrets.DB_USER }}" >> .env
+            printf '%s\n' "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            printf '%s\n' "DB_HOST=${{ secrets.DB_HOST }}" >> .env
 
-            AUTH_KEY=${{ secrets.AUTH_KEY }}
-            SECURE_AUTH_KEY=${{ secrets.SECURE_AUTH_KEY }}
-            LOGGED_IN_KEY=${{ secrets.LOGGED_IN_KEY }}
-            NONCE_KEY=${{ secrets.NONCE_KEY }}
-            AUTH_SALT=${{ secrets.AUTH_SALT }}
-            SECURE_AUTH_SALT=${{ secrets.SECURE_AUTH_SALT }}
-            LOGGED_IN_SALT=${{ secrets.LOGGED_IN_SALT }}
-            NONCE_SALT=${{ secrets.NONCE_SALT }}
+            printf '%s\n' "WP_ENV=${{ secrets.WP_ENV }}" >> .env
+            printf '%s\n' "WP_HOME=${{ secrets.WP_HOME }}" >> .env
+            printf '%s\n' "WP_SITEURL=${{ secrets.WP_SITEURL }}" >> .env
 
-            B2B_CASSO_WEBHOOK_TOKEN=${{ secrets.B2B_CASSO_WEBHOOK_TOKEN }}
+            printf '%s\n' "AUTH_KEY=${{ secrets.AUTH_KEY }}" >> .env
+            printf '%s\n' "SECURE_AUTH_KEY=${{ secrets.SECURE_AUTH_KEY }}" >> .env
+            printf '%s\n' "LOGGED_IN_KEY=${{ secrets.LOGGED_IN_KEY }}" >> .env
+            printf '%s\n' "NONCE_KEY=${{ secrets.NONCE_KEY }}" >> .env
 
-            MAIL_HOST=${{ secrets.MAIL_HOST }}
-            MAIL_PORT=${{ secrets.MAIL_PORT }}
-            MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
-            MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
-            MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}
-            MAIL_FROM_NAME=${{ secrets.MAIL_FROM_NAME }}
+            printf '%s\n' "AUTH_SALT=${{ secrets.AUTH_SALT }}" >> .env
+            printf '%s\n' "SECURE_AUTH_SALT=${{ secrets.SECURE_AUTH_SALT }}" >> .env
+            printf '%s\n' "LOGGED_IN_SALT=${{ secrets.LOGGED_IN_SALT }}" >> .env
+            printf '%s\n' "NONCE_SALT=${{ secrets.NONCE_SALT }}" >> .env
 
-            CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
-            CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
-            CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
-            EOF
+            printf '%s\n' "B2B_CASSO_WEBHOOK_TOKEN=${{ secrets.B2B_CASSO_WEBHOOK_TOKEN }}" >> .env
+
+            printf '%s\n' "MAIL_HOST=${{ secrets.MAIL_HOST }}" >> .env
+            printf '%s\n' "MAIL_PORT=${{ secrets.MAIL_PORT }}" >> .env
+            printf '%s\n' "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> .env
+            printf '%s\n' "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> .env
+            printf '%s\n' "MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}" >> .env
+            printf '%s\n' "MAIL_FROM_NAME=${{ secrets.MAIL_FROM_NAME }}" >> .env
+
+            printf '%s\n' "CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}" >> .env
+            printf '%s\n' "CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}" >> .env
+            printf '%s\n' "CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}" >> .env
 
             chmod 600 .env
 
-            cat > docker-compose.yml <<EOF
-            services:
-              wordpress:
-                image: \${DOCKERHUB_USERNAME}/b2b-oto:latest
+            docker login \
+              -u ${{ secrets.DOCKERHUB_USERNAME }} \
+              -p ${{ secrets.DOCKERHUB_TOKEN }}
 
-                container_name: sanoto-wordpress
+            docker compose pull
 
-                restart: unless-stopped
-
-                env_file:
-                  - .env
-
-                environment:
-                  DB_HOST: \${DB_HOST}
-                  DB_NAME: \${DB_NAME}
-                  DB_USER: \${DB_USER}
-                  DB_PASSWORD: \${DB_PASSWORD}
-
-                  WP_ENV: \${WP_ENV}
-                  WP_HOME: \${WP_HOME}
-                  WP_SITEURL: \${WP_SITEURL}
-
-                  AUTH_KEY: \${AUTH_KEY}
-                  SECURE_AUTH_KEY: \${SECURE_AUTH_KEY}
-                  LOGGED_IN_KEY: \${LOGGED_IN_KEY}
-                  NONCE_KEY: \${NONCE_KEY}
-
-                  AUTH_SALT: \${AUTH_SALT}
-                  SECURE_AUTH_SALT: \${SECURE_AUTH_SALT}
-                  LOGGED_IN_SALT: \${LOGGED_IN_SALT}
-                  NONCE_SALT: \${NONCE_SALT}
-
-                  B2B_CASSO_WEBHOOK_TOKEN: \${B2B_CASSO_WEBHOOK_TOKEN}
-
-                  MAIL_HOST: \${MAIL_HOST}
-                  MAIL_PORT: \${MAIL_PORT}
-                  MAIL_USERNAME: \${MAIL_USERNAME}
-                  MAIL_PASSWORD: \${MAIL_PASSWORD}
-                  MAIL_FROM_ADDRESS: \${MAIL_FROM_ADDRESS}
-                  MAIL_FROM_NAME: \${MAIL_FROM_NAME}
-
-                  CLOUDINARY_CLOUD_NAME: \${CLOUDINARY_CLOUD_NAME}
-                  CLOUDINARY_API_KEY: \${CLOUDINARY_API_KEY}
-                  CLOUDINARY_API_SECRET: \${CLOUDINARY_API_SECRET}
-
-                ports:
-                  - "8001:80"
-
-                volumes:
-                  - uploads_data:/var/www/html/web/app/uploads
-                  - cache_data:/var/www/html/web/app/cache
-
-            volumes:
-              uploads_data:
-              cache_data:
-            EOF
-
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-
-            docker compose pull wordpress
+            docker compose down
 
             docker compose up -d
 
