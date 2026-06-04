@@ -36,17 +36,27 @@ FROM node:20-bookworm AS theme_assets
 
 WORKDIR /theme
 
-COPY web/app/themes/my-theme/package*.json ./
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV CI=true
 
-RUN if [ -f package-lock.json ]; then \
+COPY web/app/themes/my-theme/ ./
+
+RUN rm -rf node_modules public .budfiles storage cache \
+    && if [ -f package-lock.json ]; then \
       npm ci; \
     else \
       npm install; \
     fi
 
-COPY web/app/themes/my-theme/ ./
-
-RUN npm run build
+RUN npm run build || ( \
+    echo "==== THEME BUILD FAILED ====" && \
+    echo "Current path:" && pwd && \
+    echo "Node version:" && node -v && \
+    echo "NPM version:" && npm -v && \
+    echo "Files:" && ls -la && \
+    echo "Package json:" && cat package.json && \
+    exit 1 \
+)
 
 
 FROM composer:2 AS theme_vendor
@@ -55,7 +65,8 @@ WORKDIR /theme
 
 COPY web/app/themes/my-theme/ ./
 
-RUN if [ -f composer.json ]; then \
+RUN rm -rf node_modules .budfiles storage cache \
+    && if [ -f composer.json ]; then \
       composer install \
         --no-dev \
         --prefer-dist \
