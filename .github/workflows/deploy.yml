@@ -218,8 +218,23 @@ jobs:
             echo "== Validate compose =="
             docker compose --env-file .compose.env config >/dev/null
 
-            echo "== Pull image =="
-            docker compose --env-file .compose.env pull wordpress
+            echo "== Pull image with retry =="
+            for i in $(seq 1 5); do
+              echo "Pull attempt $i/5..."
+
+              if docker compose --env-file .compose.env pull wordpress; then
+                echo "Pull image success"
+                break
+              fi
+
+              echo "Pull image failed, retry after 15 seconds..."
+              sleep 15
+
+              if [ "$i" -eq 5 ]; then
+                echo "Pull image failed after 5 attempts"
+                exit 1
+              fi
+            done
 
             echo "== Stop old compose containers =="
             docker compose --env-file .compose.env down --remove-orphans || true
