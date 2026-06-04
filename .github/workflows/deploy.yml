@@ -180,7 +180,6 @@ jobs:
 
                     chown www-data:www-data /var/www/html/web/.htaccess
                     chmod 644 /var/www/html/web/.htaccess
-                    a2enmod rewrite >/dev/null 2>&1 || true
 
                     exec apache2-foreground
 
@@ -219,11 +218,6 @@ jobs:
             echo "== Validate compose =="
             docker compose --env-file .compose.env config >/dev/null
 
-            echo "== Kill stuck docker pull processes =="
-            pkill -f "[d]ocker compose --env-file .compose.env pull wordpress" || true
-            pkill -f "[d]ocker pull .*b2b-oto:latest" || true
-            sleep 3
-
             echo "== Pull image with hard timeout and retry =="
 
             IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/b2b-oto:latest"
@@ -239,7 +233,6 @@ jobs:
               fi
 
               echo "Pull image attempt $i failed or timed out."
-              pkill -f "[d]ocker pull .*b2b-oto:latest" || true
               docker system prune -f || true
               sleep 20
             done
