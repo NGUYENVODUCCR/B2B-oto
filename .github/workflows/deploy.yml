@@ -218,23 +218,28 @@ jobs:
             echo "== Validate compose =="
             docker compose --env-file .compose.env config >/dev/null
 
-            echo "== Pull image with retry =="
+            echo "== Pull image with timeout and retry =="
+
+            PULL_OK=0
+
             for i in $(seq 1 5); do
               echo "Pull attempt $i/5..."
 
-              if docker compose --env-file .compose.env pull wordpress; then
-                echo "Pull image success"
+              if timeout 420 docker pull "${{ secrets.DOCKERHUB_USERNAME }}/b2b-oto:latest"; then
+                echo "Pull image success."
+                PULL_OK=1
                 break
               fi
 
-              echo "Pull image failed, retry after 15 seconds..."
-              sleep 15
-
-              if [ "$i" -eq 5 ]; then
-                echo "Pull image failed after 5 attempts"
-                exit 1
-              fi
+              echo "Pull image attempt $i failed or timed out."
+              docker system prune -f || true
+              sleep 20
             done
+
+            if [ "$PULL_OK" != "1" ]; then
+              echo "Pull image failed after 5 attempts."
+              exit 1
+            fi
 
             echo "== Stop old compose containers =="
             docker compose --env-file .compose.env down --remove-orphans || true
