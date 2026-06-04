@@ -83,6 +83,16 @@ class CompanyMemberRepository {
                 )
             );
         }
+
+     public function deleteCron($userId)
+        {
+            global $wpdb;
+            return $wpdb->delete(
+                $this->table,
+                ['user_id' => $userId]
+            );
+        }
+
         
     public function findByCompanyAndUser($companyId, $userId)
     {

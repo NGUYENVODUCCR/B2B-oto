@@ -146,4 +146,16 @@ public function findLatestSellerRequestEmail($companyId)
         )
     );
 }
+
+     public function deleteCron($id)
+        {
+            global $wpdb;
+            return $wpdb->delete(
+                $this->table,
+                [
+                    'id' => $id,
+                    'verification_status' => 'unverified'
+                ]
+            );
+        }
 }

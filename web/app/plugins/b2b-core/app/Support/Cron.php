@@ -28,36 +28,16 @@ class Cron {
     private static function cleanupUsers() {
 
         $userRepoPath = __DIR__ . '/../Repositories/UserRepository.php';
-        $otpRepoPath = __DIR__ . '/../Repositories/PhoneVerificationRepository.php';
-        $emailOtpRepoPath = __DIR__ . '/../Repositories/PasswordResetRepository.php';
-
         if (!file_exists($userRepoPath)) {
             throw new Exception("Không tìm thấy UserRepository");
         }
-
         require_once $userRepoPath;
-        require_once $otpRepoPath;
-        require_once $emailOtpRepoPath;
-
         $userRepo = new UserRepository();
-        $otpRepo = new PhoneVerificationRepository();
-        $emailOtpRepo = new PasswordResetRepository();
-
         self::log("=== CLEANUP START ===");
-
         echo "Running cleanupPendingUsers...\n";
-
         self::log("Start cleanup pending users");
         $userRepo->cleanupPendingUsers();
         self::log("Done cleanup pending users");
-
-        self::log("Start cleanup PHONE OTP expired");
-        $phoneDeleted = $otpRepo->deleteExpired();
-        self::log("Deleted PHONE OTP rows: " . $phoneDeleted);
-
-        self::log("Start cleanup EMAIL OTP expired");
-        $emailDeleted = $emailOtpRepo->deleteExpired();
-        self::log("Deleted EMAIL OTP rows: " . $emailDeleted);
         self::log("=== CLEANUP DONE ===");
         echo "Cleanup done\n";
     }

@@ -154,25 +154,30 @@ class UserRepository {
         if (!class_exists('PhoneVerificationRepository')) {
             require_once __DIR__ . '/PhoneVerificationRepository.php';
         }
-
         $verifyRepo = new PhoneVerificationRepository();
+
+        if (!class_exists('CompanyRepository')) {
+            require_once __DIR__ . '/CompanyRepository.php';
+        }
+        $companyRepo = new CompanyRepository();
+
+        if (!class_exists('CompanyMemberRepository')) {
+            require_once __DIR__ . '/CompanyMemberRepository.php';
+        }
+        $companyMemberRepo = new CompanyMemberRepository();
 
         foreach ($users as $user) {
 
             error_log("Deleting user ID: {$user->id} | Phone: {$user->phone}");
 
             if (!empty($user->wp_user_id)) {
-
                 $wpdb->delete(
                     $wpdb->prefix . 'b2b_user_roles',
                     [
                         'user_id' => $user->wp_user_id
                     ]
                 );
-
-                WpUserService::instance()->delete($user->wp_user_id);
-
-                error_log("Deleted WP user: {$user->wp_user_id}");
+                error_log("Deleted role for WP user: {$user->wp_user_id}");
             }
 
             try {
@@ -180,6 +185,44 @@ class UserRepository {
                 error_log("Deleted OTP for: {$user->phone}");
             } catch (Exception $e) {
                 error_log("Delete OTP error: " . $e->getMessage());
+            }
+
+            $companyId = 0;
+
+            try {
+                if (!empty($user->wp_user_id)) {
+                    $companyId = (int) $companyMemberRepo->findCompanyId($user->wp_user_id);
+                    error_log("Found company ID: {$companyId} for WP user: {$user->wp_user_id}");
+                }
+            } catch (Exception $e) {
+                error_log("Find company error: " . $e->getMessage());
+            }
+
+            try {
+                if (!empty($user->wp_user_id)) {
+                    $companyMemberRepo->deleteCron($user->wp_user_id);
+                    error_log("Deleted company member for: {$user->wp_user_id}");
+                }
+            } catch (Exception $e) {
+                error_log("Delete company member error: " . $e->getMessage());
+            }
+
+            try {
+                if ($companyId > 0) {
+                    $companyRepo->deleteCron($companyId);
+                    error_log("Deleted company for: {$companyId}");
+                }
+            } catch (Exception $e) {
+                error_log("Delete company error: " . $e->getMessage());
+            }
+            
+            if (!empty($user->wp_user_id)) {
+                try {
+                    WpUserService::instance()->delete($user->wp_user_id);
+                    error_log("Deleted WP user: {$user->wp_user_id}");
+                } catch (Exception $e) {
+                    error_log("Delete WP user error: " . $e->getMessage());
+                }
             }
 
             $deleted = $wpdb->delete($this->table, ['id' => $user->id]);
@@ -194,6 +237,7 @@ class UserRepository {
         error_log("=== CLEANUP DONE ===");
         echo "Cleanup done\n";
     }
+
         public function updateStatus($userId, $status)
         {
         global $wpdb;
