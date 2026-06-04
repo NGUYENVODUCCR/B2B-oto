@@ -155,19 +155,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (currentModule === 'seller') {
-      pageTitle.innerText = 'Quản lý yêu cầu người bán (Seller)';
+      pageTitle.innerText = 'Quản lý đăng ký bán hàng';
       btnShowList.innerText = 'Xem danh sách đơn đăng ký bán hàng';
       btnShowList.style.display = 'inline-block';
     } else if (currentModule === 'product') {
-      pageTitle.innerText = 'Quản lý và Duyệt bài đăng (Sản phẩm)';
+      pageTitle.innerText = 'Quản lý và Duyệt bài đăng Sản phẩm';
       btnShowList.innerText = 'Xem danh sách bài đăng';
       btnShowList.style.display = 'inline-block';
     } else if (currentModule === 'user') {
-      pageTitle.innerText = 'Quản lý tài khoản và Phân quyền thành viên (Users)';
+      pageTitle.innerText = 'Quản lý tài khoản và Phân quyền thành viên';
       btnShowList.innerText = 'Tải danh sách dữ liệu tài khoản';
       btnShowList.style.display = 'inline-block';
     } else if (currentModule === 'chat') {
-      pageTitle.innerText = 'Hệ thống kết nối và Phản hồi Kênh liên hệ hỗ trợ nội bộ';
+      pageTitle.innerText = 'Kênh liên hệ nội bộ';
       btnShowList.style.display = 'none';
       loadCurrentModule();
     }
@@ -473,29 +473,31 @@ function bindListActions() {
 
     
       if (target.classList.contains('admin-revenue-view-btn')) {
-        const sellerId = Number(target.dataset.sellerId || 0);
+        const sellerCompanyId = Number(
+          target.dataset.sellerCompanyId
+          || target.dataset.sellerId
+          || target.dataset.companyId
+          || 0
+        );
+
         const companyName = target.dataset.companyName || 'Đối tác';
         
-        if (sellerId <= 0) {
-          alert('Không thể xác định mã đối tác để truy vấn tài chính!');
+        if (sellerCompanyId <= 0) {
+          alert('Không thể xác định mã công ty Seller để truy vấn tài chính!');
           return;
         }
-
 
         currentModule = 'revenue';
         pageTitle.innerText = `Báo cáo tài chính doanh thu: ${companyName}`;
         
-      
         const revenueSkeleton = document.getElementById('admin-revenue-zone')?.innerHTML || '';
         requestList.innerHTML = revenueSkeleton;
         
-    
         bindRevenueFilterFormSubmit();
 
-  
         setTimeout(async () => {
           try {
-            await loadAdminRevenueData(sellerId, companyName);
+            await loadAdminRevenueData(sellerCompanyId, companyName);
           } catch (err) {
             console.error("Lỗi khởi chạy tiến trình nạp dữ liệu tài chính:", err);
           }
@@ -619,7 +621,7 @@ async function handleToggleUserStatus(btn, userId) {
     return;
   }
 
-  console.log("👉 ĐÃ CHẠY VÀO HÀM KHÓA USER MỚI!");
+  console.log(" ĐÃ CHẠY VÀO HÀM KHÓA USER MỚI!");
   const targetStatus = btn.dataset.targetStatus;
   const actionText = targetStatus === 'blocked' ? 'KHÓA tài khoản' : 'MỞ KHÓA tài khoản';
 
@@ -848,11 +850,11 @@ function bindRevenueFilterFormSubmit() {
   filterForm.addEventListener('submit', async (e) => {
     e.preventDefault(); 
 
-    const sellerId = document.getElementById('revenueSellerIdFilter')?.value || '';
+    const sellerCompanyId = document.getElementById('revenueSellerIdFilter')?.value || '';
     const companyName = pageTitle.innerText.replace('Báo cáo tài chính doanh thu: ', '') || 'Đối tác';
 
-    if (!sellerId) {
-      alert('Không xác định được mã Seller để lọc dữ liệu!');
+    if (!sellerCompanyId) {
+      alert('Không xác định được mã công ty Seller để lọc dữ liệu!');
       return;
     }
 
@@ -863,7 +865,7 @@ function bindRevenueFilterFormSubmit() {
     }
 
 
-    await loadAdminRevenueData(sellerId, companyName);
+    await loadAdminRevenueData(sellerCompanyId, companyName);
 
     if (submitBtn) {
       submitBtn.disabled = false;
@@ -872,7 +874,7 @@ function bindRevenueFilterFormSubmit() {
   });
 }
 
-async function loadAdminRevenueData(sellerId, companyName) {
+async function loadAdminRevenueData(sellerCompanyId, companyName) {
   const container = document.getElementById('revenueOrdersList');
   if (!container) return;
 
@@ -881,10 +883,11 @@ async function loadAdminRevenueData(sellerId, companyName) {
   const dateFromInput = document.getElementById('revenueDateFrom');
   const dateToInput = document.getElementById('revenueDateTo');
 
-  if (filterSellerId) filterSellerId.value = sellerId;
+  if (filterSellerId) filterSellerId.value = sellerCompanyId;
 
   const params = {
-    seller_id: sellerId,
+    seller_company_id: sellerCompanyId,
+    company_id: sellerCompanyId,
     brand: brandSelect?.value || '',
     date_from: dateFromInput?.value || '',
     date_to: dateToInput?.value || '',

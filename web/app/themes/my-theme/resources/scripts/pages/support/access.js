@@ -270,7 +270,7 @@ export function createSupportAccess({ state, getHomeUrl }) {
     if (backToHelpBtn) {
       backToHelpBtn.hidden = !showPublicSellerChannel;
       backToHelpBtn.href = sellerUrl;
-      backToHelpBtn.textContent = 'Quay về trang Seller';
+      backToHelpBtn.textContent = 'Quay về trang bán hàng';
     }
   }
 

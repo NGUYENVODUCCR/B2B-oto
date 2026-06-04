@@ -5,13 +5,13 @@
 <div class="container py-5">
 
     <div class="seller-header">
-        <h2 class="seller-title">Trang Seller</h2>
+        <h2 class="seller-title">Trang bán hàng</h2>
         <button id="open-product-form" class="btn-create-product">Đăng sản phẩm mới</button>
     </div>
 
     <div class="seller-stats-box" hidden>
         <div class="seller-stat-card">
-            <strong>Doanh thu Seller</strong>
+            <strong>Doanh thu bán hàng</strong>
             <p id="sellerRevenueAmount">0 VNĐ</p>
         </div>
 
@@ -28,7 +28,7 @@
         </div>
         <div class="seller-chat-actions">
             <a href="{{ home_url('/support/') }}?view=seller-channel&force_public=1" class="seller-chat-link seller-channel-link">
-                Kênh chat chung Seller
+                Kênh chat chung bán hàng
             </a>
             <a href="{{ home_url('/chat') }}" class="seller-chat-link">
                 Mở chat

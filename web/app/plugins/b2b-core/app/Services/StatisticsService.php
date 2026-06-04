@@ -74,18 +74,22 @@ class StatisticsService
 
     private function normalizeFilters(array $filters)
     {
-        $sellerCompanyId = (int) (
-            $filters['seller_company_id']
-            ?? $filters['seller_id']
-            ?? $filters['company_id']
-            ?? 0
-        );
+        $sellerCompanyId = 0;
+
+        foreach (['seller_company_id', 'company_id', 'seller_id'] as $key) {
+            $value = isset($filters[$key]) ? (int) $filters[$key] : 0;
+
+            if ($value > 0) {
+                $sellerCompanyId = $value;
+                break;
+            }
+        }
 
         return [
             'brand' => isset($filters['brand']) ? sanitize_text_field((string) $filters['brand']) : '',
             'date_from' => $this->validDate($filters['date_from'] ?? '') ? (string) $filters['date_from'] : '',
             'date_to' => $this->validDate($filters['date_to'] ?? '') ? (string) $filters['date_to'] : '',
-            'seller_company_id' => $sellerCompanyId > 0 ? $sellerCompanyId : 0,
+            'seller_company_id' => $sellerCompanyId,
         ];
     }
 

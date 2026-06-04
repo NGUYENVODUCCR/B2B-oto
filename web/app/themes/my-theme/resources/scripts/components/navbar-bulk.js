@@ -59,33 +59,33 @@ function renderHomeRoleMenu(rawRoles) {
 
   if (isAdmin(roles)) {
     menu.innerHTML = `
-      <a href="${getHomeUrl('/dashboard/')}">Trang Buyer</a>
-      <a href="${getHomeUrl('/seller/')}">Trang Seller</a>
-      <a class="home-sub-menu-danger" href="${getHomeUrl('/admin/')}">Trang Admin</a>
-      <a href="${getHomeUrl('/support-workspace/')}">Trang Support</a>
+      <a href="${getHomeUrl('/dashboard/')}">Trang mua hàng</a>
+      <a href="${getHomeUrl('/seller/')}">Trang bán hàng</a>
+      <a class="home-sub-menu-danger" href="${getHomeUrl('/admin/')}">Trang quản lý</a>
+      <a href="${getHomeUrl('/support-workspace/')}">Trang hỗ trợ</a>
     `;
     return;
   }
 
   if (isSupport(roles)) {
     menu.innerHTML = `
-      <a href="${getHomeUrl('/dashboard/')}">Trang Buyer</a>
-      <a href="${getHomeUrl('/support-workspace/')}">Trang Support</a>
+      <a href="${getHomeUrl('/dashboard/')}">Trang mua hàng</a>
+      <a href="${getHomeUrl('/support-workspace/')}">Trang hỗ trợ</a>
     `;
     return;
   }
 
   if (isSeller(roles)) {
     menu.innerHTML = `
-      <a href="${getHomeUrl('/seller/')}">Trang Seller</a>
-      <a href="${getHomeUrl('/dashboard/')}">Trang Buyer</a>
+      <a href="${getHomeUrl('/seller/')}">Trang bán hàng</a>
+      <a href="${getHomeUrl('/dashboard/')}">Trang mua hàng</a>
     `;
     return;
   }
 
   menu.innerHTML = `
-    <a href="#" class="home-sub-menu-disabled" data-disabled-seller="true">Trang Seller</a>
-    <a href="${getHomeUrl('/dashboard/')}">Trang Buyer</a>
+    <a href="#" class="home-sub-menu-disabled" data-disabled-seller="true">Trang bán hàng</a>
+    <a href="${getHomeUrl('/dashboard/')}">Trang mua hàng</a>
   `;
 }
 

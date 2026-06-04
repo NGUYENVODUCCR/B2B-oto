@@ -8,7 +8,7 @@ export function userCardTemplate(user) {
   
 
   const btnToggleClass = isBlocked ? 'btn-unlock-user' : 'btn-lock-user';
-  const btnToggleText = isBlocked ? '🔓 Mở khóa tài khoản' : '🔒 Khóa tài khoản';
+  const btnToggleText = isBlocked ? ' Mở khóa tài khoản' : ' Khóa tài khoản';
   const currentTargetStatus = isBlocked ? 'active' : 'blocked';
 
   const rolesText = Array.isArray(user.roles) ? user.roles.join(', ') : 'customer';
@@ -116,10 +116,10 @@ export function userEditModalTemplate() {
           <div>
             <label style="display: block; font-weight: bold; font-size: 13px; margin-bottom: 4px;">Phân quyền (Role) <span style="color: red;">*</span></label>
             <select id="edit-user-role" style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; background-color: #fff;">
-              <option value="customer">Khách mua xe (Buyer)</option>
-              <option value="seller">Đối tác bán xe (Seller)</option>
-              <option value="ROLE_SUPPORT">Nhân viên hỗ trợ (Support)</option>
-              <option value="administrator">Quản trị viên tối cao (Admin)</option>
+              <option value="customer">Khách mua xe </option>
+              <option value="seller">Đối tác bán xe </option>
+              <option value="ROLE_SUPPORT">Nhân viên hỗ trợ </option>
+              <option value="administrator">Quản trị viên tối cao </option>
             </select>
           </div>
 

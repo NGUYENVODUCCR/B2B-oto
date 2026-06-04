@@ -26,14 +26,13 @@ export function getSellerStatusMeta(status) {
 
 export function sellerRequestCardTemplate(request) {
   const status = getSellerStatusMeta(request.status);
-  const currentStatus = String(request.status || '').toLowerCase(); // Chuẩn hóa chữ thường
+  const currentStatus = String(request.status || '').toLowerCase();
   const sellerCompanyId = Number(
-    request.company_id
-    || request.seller_company_id
-    || request.company?.id
-    || request.id
-    || 0
-  );
+  request.company_id
+  || request.seller_company_id
+  || request.company?.id
+  || 0
+);
 
   return `
     <div class="admin-card request-card">
@@ -51,13 +50,16 @@ export function sellerRequestCardTemplate(request) {
         </button>
         
         ${currentStatus === 'verified' ? `
+        ${sellerCompanyId > 0 ? `
           <button type="button" class="admin-revenue-view-btn action-btn" 
+            data-seller-company-id="${escapeHtml(sellerCompanyId)}"
             data-seller-id="${escapeHtml(sellerCompanyId)}" 
             data-company-name="${escapeHtml(request.company_name || 'Seller')}"
             style="background-color: #10b981; color: #fff; font-weight: bold;">
-            📊 Doanh thu
+             Doanh thu
           </button>
         ` : ''}
+      ` : ''}
 
         ${currentStatus === 'pending' ? `
           <button class="action-btn approve-btn" data-id="${escapeHtml(request.id)}">Đã xác minh</button>

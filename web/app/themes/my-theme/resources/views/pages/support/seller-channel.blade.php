@@ -11,7 +11,7 @@
                 href="{{ home_url('/seller/') }}"
                 hidden
             >
-                Quay về trang Seller
+                Quay về trang bán hàng
             </a>
         </div>
     </section>
@@ -23,7 +23,7 @@
             </div>
             <div class="seller-channel-shell" data-seller-channel-shell>
                 <div class="seller-channel-messages" data-seller-channel-messages>
-                    <div class="support-empty">Đang tải kênh chung seller...</div>
+                    <div class="support-empty">Đang tải kênh chung bán hàng...</div>
                 </div>
                 <form class="seller-channel-form" data-seller-channel-form>
                     <textarea name="message" rows="3" placeholder="Nhập phản hồi nhanh cho Support..." required></textarea>

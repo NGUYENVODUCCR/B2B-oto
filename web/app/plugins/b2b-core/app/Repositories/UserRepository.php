@@ -85,6 +85,30 @@ class UserRepository {
         return $this->findById($id);
     }
 
+    public function updateByWpUserId($wpUserId, $data) {
+        global $wpdb;
+
+        $wpUserId = (int) $wpUserId;
+
+        if ($wpUserId <= 0) {
+            throw new Exception('WP user ID không hợp lệ');
+        }
+
+        $data['updated_at'] = current_time('mysql');
+
+        $result = $wpdb->update(
+            $this->table,
+            $data,
+            ['wp_user_id' => $wpUserId]
+        );
+
+        if ($result === false) {
+            throw new Exception('Update B2B user theo WP user ID thất bại: ' . $wpdb->last_error);
+        }
+
+        return $this->findByWpUserId($wpUserId);
+    }
+
     public function updateByPhone($phone, $data) {
         global $wpdb;
 
@@ -238,6 +262,7 @@ class UserRepository {
         echo "Cleanup done\n";
     }
 
+    
         public function updateStatus($userId, $status)
         {
         global $wpdb;
