@@ -1996,5 +1996,3 @@ private function decorateTicketRecord($ticket)
         return false;
     }
 }
-
-

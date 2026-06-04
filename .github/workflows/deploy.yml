@@ -99,8 +99,13 @@ jobs:
             CLOUDINARY_API_SECRET='${{ secrets.CLOUDINARY_API_SECRET }}'
 
             B2B_CASSO_WEBHOOK_TOKEN='${{ secrets.B2B_CASSO_WEBHOOK_TOKEN }}'
-            RUNTIME_ENV_EOF
+            B2B_BANK_ACCOUNT_NAME='${{ secrets.B2B_BANK_ACCOUNT_NAME }}'
+            B2B_BANK_ACCOUNT_NUMBER='${{ secrets.B2B_BANK_ACCOUNT_NUMBER }}'
+            B2B_BANK_BIN='${{ secrets.B2B_BANK_BIN }}'
+            B2B_BANK_NAME='${{ secrets.B2B_BANK_NAME }}'
 
+            RUNTIME_ENV_EOF
+            
             echo "== Create app env for Bedrock =="
             cp runtime.env app.env
 
@@ -261,7 +266,7 @@ jobs:
             if docker ps --filter "name=sanoto-wordpress" --filter "status=running" | grep -q sanoto-wordpress; then
               docker exec sanoto-wordpress sh -lc 'ls -la /var/www/html/.env'
               docker exec sanoto-wordpress sh -lc 'grep -n "DRONE\|PREV_COMMAND\|\$? ; if" /var/www/html/.env && exit 1 || echo "OK: container .env clean"'
-              docker exec sanoto-wordpress sh -lc "grep -E '^(DB_NAME|DB_USER|DB_HOST|WP_ENV|WP_HOME|WP_SITEURL|SMS_TOKEN|SMS_SENDER)=' /var/www/html/.env | sed 's/=.*/=***MASKED***/'"
+              docker exec sanoto-wordpress sh -lc "grep -E '^(DB_NAME|DB_USER|DB_HOST|WP_ENV|WP_HOME|WP_SITEURL|SMS_TOKEN|SMS_SENDER|B2B_CASSO_WEBHOOK_TOKEN|B2B_BANK_ACCOUNT_NAME|B2B_BANK_ACCOUNT_NUMBER|B2B_BANK_BIN|B2B_BANK_NAME)=' /var/www/html/.env | sed 's/=.*/=***MASKED***/'"
             else
               echo "Container is not running. See logs above."
               exit 1
