@@ -6,30 +6,30 @@
 
     <div class="admin-module-tabs">
         <button class="module-tab-btn active" data-module="seller">
-            💼 Quản lý Yêu cầu Seller
+             Quản lý yêu cầu người bán
         </button>
         <button class="module-tab-btn" data-module="product">
-            🚗 Quản lý Tin bán xe (Sản phẩm)
+             Quản lý tin bán xe (Sản phẩm)
         </button>
         <button class="module-tab-btn" data-module="user">
-            👥 Quản lý Người dùng (Users)
+             Quản lý người dùng
         </button>
         <button class="module-tab-btn" data-module="chat">
-            💬 Kênh Chat Nội bộ (Support)
+             Kênh Chat nội bộ (Support)
         </button>
         <button class="module-tab-btn" data-module="revenue" id="tab-module-revenue" style="display: none;">
-            💰 Doanh thu Seller đang xem
+             Doanh thu bán hàng đang xem
         </button>
     </div>
 
-    <h1 id="admin-page-title">Quản lý yêu cầu người bán (Seller)</h1>
+    <h1 id="admin-page-title">Quản lý đăng ký bán hàng</h1>
 
     <div class="admin-actions-bar">
         <button id="btn-show-list" class="admin-main-btn">
             Xem danh sách đơn đăng ký bán hàng
         </button>
         <button id="btn-create-user-trigger" class="admin-main-btn success-btn" style="display: none; background-color: #28a745; color: white; border: none; border-radius: 4px; margin-left: 10px;">
-            ➕ Tạo tài khoản mới
+             Tạo tài khoản mới
         </button>
     </div>
 
@@ -50,10 +50,10 @@
 
     <div id="user-filter-tabs-bar" class="filter-tabs-bar">
         <button class="filter-tab-btn active" data-module="user" data-status="all">Tất cả tài khoản</button>
-        <button class="filter-tab-btn" data-module="user" data-status="administrator">Quản trị viên (Admin)</button>
-        <button class="filter-tab-btn" data-module="user" data-status="ROLE_SUPPORT">Nhân viên Support</button>
-        <button class="filter-tab-btn" data-module="user" data-status="seller">Người bán (Seller)</button>
-        <button class="filter-tab-btn" data-module="user" data-status="customer">Khách hàng (Customer)</button>
+        <button class="filter-tab-btn" data-module="user" data-status="administrator">Quản trị viên</button>
+        <button class="filter-tab-btn" data-module="user" data-status="ROLE_SUPPORT">Nhân viên </button>
+        <button class="filter-tab-btn" data-module="user" data-status="seller">Người bán </button>
+        <button class="filter-tab-btn" data-module="user" data-status="customer">Khách hàng</button>
     </div>
 
     <div id="chat-tabs-bar" class="filter-tabs-bar">

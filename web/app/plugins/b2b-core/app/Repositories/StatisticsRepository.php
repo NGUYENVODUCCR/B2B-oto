@@ -107,7 +107,7 @@ class StatisticsRepository
         return $rows;
     }
 
-    public function successfulOrders($companyId = 0, array $filters = [], $limit = 8)
+    public function successfulOrders($companyId = 0, array $filters = [], $limit = 1000)
     {
         global $wpdb;
 

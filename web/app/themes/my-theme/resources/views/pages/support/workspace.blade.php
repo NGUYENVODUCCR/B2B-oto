@@ -1,14 +1,14 @@
 <section id="supportAdminPage" class="support-admin-page" hidden>
     <section class="support-header">
         <div>
-            <p>Support Center Workspace</p>
+            <p>Trung tâm hỗ trợ</p>
             <h1>Hệ thống xử lý Ticket và Chat điều phối nội bộ</h1>
         </div>
         <div class="support-action-header-bar">
             <button type="button" id="btn-switch-tickets" class="sub-tab-btn active">Danh sách Ticket</button>
-            <button type="button" id="btn-switch-internal-chat" class="sub-tab-btn">Kênh Chat với Admin</button>
+            <button type="button" id="btn-switch-internal-chat" class="sub-tab-btn">Kênh Chat với quản lý</button>
             <button type="button" id="btn-switch-payouts" class="sub-tab-btn">Danh sách chờ giải ngân</button>
-            <button type="button" id="btn-switch-seller-channel" class="sub-tab-btn">Kênh chung Seller</button>
+            <button type="button" id="btn-switch-seller-channel" class="sub-tab-btn">Kênh chung bán hàng</button>
             <button type="button" id="supportRefreshBtn">Làm mới</button>
         </div>
     </section>
@@ -67,7 +67,7 @@
             </div>
             <div class="seller-channel-shell" data-seller-channel-shell>
                 <div class="seller-channel-messages" data-seller-channel-messages>
-                    <div class="support-empty">Đang tải kênh chung seller...</div>
+                    <div class="support-empty">Đang tải kênh chung bán hàng...</div>
                 </div>
                 <form class="seller-channel-form" data-seller-channel-form>
                     <textarea name="message" rows="3" placeholder="Nhập nội dung thông báo cho toàn bộ seller..." required></textarea>

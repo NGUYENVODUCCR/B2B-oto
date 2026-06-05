@@ -200,7 +200,7 @@ export function createSupportRenderers({ state, getHomeUrl, canManageTickets }) 
       const rows = Array.isArray(state.sellerChannel?.messages) ? state.sellerChannel.messages : [];
       html = rows.length
         ? rows.map((message) => sellerChannelMessageMarkup(message)).join('')
-        : '<div class="support-empty">Chưa có tin nhắn nào trong kênh chung seller.</div>';
+        : '<div class="support-empty">Chưa có tin nhắn nào trong kênh chung bán hàng.</div>';
     }
 
     containers.forEach((container) => {

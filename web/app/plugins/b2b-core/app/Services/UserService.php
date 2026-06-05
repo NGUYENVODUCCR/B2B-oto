@@ -196,58 +196,67 @@ class UserService {
         return false;
     }
 
-public function updateProfile($userId, $data)
-{
-    $updateDataB2b = [];
-    $updateDataWp = [];
+    public function updateProfile($userId, $data)
+    {
+        $wpUserId = (int) $userId;
 
-    if (!empty($data['phone']) || !empty($data['email'])) {
-        throw new Exception('Email và số điện thoại là duy nhất (không thể sửa)');
+        if ($wpUserId <= 0) {
+            throw new Exception('WP user ID không hợp lệ');
+        }
+
+        $updateDataB2b = [];
+        $updateDataWp = [];
+
+        if (!empty($data['phone']) || !empty($data['email'])) {
+            throw new Exception('Email và số điện thoại là duy nhất (không thể sửa)');
+        }
+
+        if (
+            !empty($data['status']) ||
+            !empty($data['phone_verified_at']) ||
+            !empty($data['created_at']) ||
+            !empty($data['updated_at']) ||
+            !empty($data['wp_user_id'])
+        ) {
+            throw new Exception('Trường hệ thống không thể tự cập nhật');
+        }
+
+        $profileName = !empty($data['display_name'])
+            ? $data['display_name']
+            : (!empty($data['name']) ? $data['name'] : '');
+
+        if (!empty($profileName) && $profileName !== 'Đang tải...') {
+            $cleanName = TextHelper::clean($profileName);
+            $updateDataB2b['fullname'] = $cleanName;
+            $updateDataWp['display_name'] = $cleanName;
+        }
+
+        $resultOfB2b = $this->userRepo->findByWpUserId($wpUserId);
+
+        if (!$resultOfB2b) {
+            throw new Exception('Không tìm thấy user B2B tương ứng với WP user ID: ' . $wpUserId);
+        }
+
+        if (!empty($updateDataB2b)) {
+            $resultOfB2b = $this->userRepo->updateByWpUserId($wpUserId, $updateDataB2b);
+        }
+
+        if (!empty($updateDataWp)) {
+            $this->wpUserService->update($wpUserId, $updateDataWp);
+        }
+
+        if (!empty($data['user_avatar'])) {
+            $this->wpUserService->updateAvatarColumn($wpUserId, TextHelper::url($data['user_avatar']));
+        }
+
+        $resultOfB2b = $this->userRepo->findByWpUserId($wpUserId);
+        $resultOfWp = $this->wpUserService->rawRowById($wpUserId);
+
+        return [
+            'user' => $resultOfB2b,
+            'wp_user' => $resultOfWp,
+            'user_avatar' => isset($resultOfWp->user_avatar) ? $resultOfWp->user_avatar : null,
+            'display_name' => $resultOfWp->display_name ?? ($resultOfB2b->fullname ?? '')
+        ];
     }
-
-    if (
-        !empty($data['status']) ||
-        !empty($data['phone_verified_at']) ||
-        !empty($data['created_at']) ||
-        !empty($data['updated_at']) ||
-        !empty($data['wp_user_id'])
-    ) {
-        throw new Exception('Trường hệ thống không thể tự cập nhật');
-    }
-
-    $profileName = !empty($data['display_name'])
-        ? $data['display_name']
-        : (!empty($data['name']) ? $data['name'] : '');
-
-    if (!empty($profileName) && $profileName !== 'Đang tải...') {
-        $cleanName = TextHelper::clean($profileName);
-        $updateDataB2b['fullname'] = $cleanName;
-        $updateDataWp['display_name'] = $cleanName;
-    }
-
-    if (!empty($updateDataB2b)) {
-        $this->userRepo->update($userId, $updateDataB2b);
-    }
-
-    $resultOfB2b = $this->userRepo->findById($userId);
-    $wpUserId = !empty($resultOfB2b->wp_user_id) ? (int) $resultOfB2b->wp_user_id : (int) $userId;
-
-    if (!empty($updateDataWp)) {
-        $this->wpUserService->update($wpUserId, $updateDataWp);
-    }
-
-    if (!empty($data['user_avatar'])) {
-        $this->wpUserService->updateAvatarColumn($wpUserId, TextHelper::url($data['user_avatar']));
-    }
-
-    $resultOfWp = $this->wpUserService->rawRowById($wpUserId);
-
-    return [
-        'user' => $resultOfB2b,
-        'wp_user' => $resultOfWp,
-        'user_avatar' => isset($resultOfWp->user_avatar) ? $resultOfWp->user_avatar : null
-    ];
-}
-
-
 }
