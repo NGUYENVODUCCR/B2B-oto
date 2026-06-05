@@ -155,8 +155,8 @@ add_action('plugins_loaded', function () {
 
 add_filter('cron_schedules', function ($schedules) {
     $schedules['every_minute'] = [
-        'interval' => 300,
-        'display'  => 'Every 5 Minutes'
+        'interval' => 120,
+        'display'  => 'Every 2 Minutes'
     ];
     return $schedules;
 });
@@ -206,6 +206,15 @@ add_action('b2b_cleanup_users_event', function () {
 
     Cron::run();
 
+});
+
+add_action('b2b_send_signed_contract_email', function ($contractId) {
+    try {
+        $service = new ContractService();
+        $service->sendSignedContractEmail((int) $contractId);
+    } catch (Throwable $e) {
+        error_log('B2B SEND CONTRACT EMAIL ERROR: ' . $e->getMessage());
+    }
 });
 
 register_activation_hook(__FILE__, function () {

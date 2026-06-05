@@ -12,12 +12,13 @@ export function createSignatureModalController({
   emitRealtimeEvent,
 }) {
   const signaturePad = {
-    contractId: null,
-    party: null,
-    drawing: false,
-    hasInk: false,
-    lastPoint: null,
-  };
+  contractId: null,
+  party: null,
+  drawing: false,
+  hasInk: false,
+  lastPoint: null,
+  submitting: false,
+};
 
   function ensureSignatureModal() {
     if (qs('chatSignatureModal')) {
@@ -201,27 +202,48 @@ export function createSignatureModalController({
   }
 
   async function submitSignatureFromModal() {
+    if (signaturePad.submitting) {
+      return;
+    }
+
     const canvas = qs('chatSignatureCanvas');
     const name = qs('chatSignatureName')?.value.trim() || currentUserName();
+    const submitButton = qs('chatSignatureModal')?.querySelector('[data-signature-action="submit"]');
 
     if (!signaturePad.hasInk) {
       alert('Vui lòng ký vào ô chữ ký trước khi hoàn tất.');
       return;
     }
 
-    await ContractAPI.sign({
-      contract_id: signaturePad.contractId,
-      company_id: companyId(),
-      signed_by: wpUserId(),
-      party: signaturePad.party,
-      signed_name: name,
-      signature_data: canvas.toDataURL('image/png'),
-    });
+    signaturePad.submitting = true;
 
-    closeSignatureModal();
-    await openConversation(state.activeId);
-    notifyChatSocket({ type: 'contract_signed' });
-    emitRealtimeEvent('b2b:chat:changed', { rfq_id: state.activeId, type: 'contract_signed' });
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = 'Đang ký...';
+    }
+
+    try {
+      await ContractAPI.sign({
+        contract_id: signaturePad.contractId,
+        company_id: companyId(),
+        signed_by: wpUserId(),
+        party: signaturePad.party,
+        signed_name: name,
+        signature_data: canvas.toDataURL('image/png'),
+      });
+
+      closeSignatureModal();
+      await openConversation(state.activeId);
+      notifyChatSocket({ type: 'contract_signed' });
+      emitRealtimeEvent('b2b:chat:changed', { rfq_id: state.activeId, type: 'contract_signed' });
+    } finally {
+      signaturePad.submitting = false;
+
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Hoàn tất ký';
+      }
+    }
   }
 
   return {

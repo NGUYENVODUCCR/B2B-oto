@@ -51,10 +51,15 @@ class ContractService {
     }
 
     public function sign($contractId, $data = []) {
-        $this->transactionRepository->start();
+    $contractId = (int) $contractId;
+    $orderId = null;
+    $bothSigned = false;
+    $status = 'draft';
+
+    $this->transactionRepository->start();
 
         try {
-            $contract = $this->repository->findById((int) $contractId);
+            $contract = $this->repository->findById($contractId);
 
             if (!$contract) {
                 throw new Exception('Contract not found');
@@ -71,14 +76,37 @@ class ContractService {
                 throw new Exception('Signer does not belong to contract parties');
             }
 
+            if (!empty($contractData['signatures'][$party]['signed'])) {
+                $existingOrder = $this->orderRepository->findByContractId($contractId);
+
+                $this->transactionRepository->commit();
+
+                return [
+                    'contract_id' => $contractId,
+                    'status' => $contract->status,
+                    'order_id' => $existingOrder ? (int) $existingOrder->id : null,
+                    'already_signed' => true
+                ];
+            }
+
             $userId = (int) ($data['signed_by'] ?? ($data['user_id'] ?? 0));
+
+            if ($userId <= 0) {
+                throw new Exception('Signer user is required');
+            }
+
+            $signatureData = $this->signatureData($data['signature_data'] ?? '');
+
+            if ($signatureData === '') {
+                throw new Exception('Signature data is required');
+            }
 
             $contractData['signatures'][$party] = [
                 'signed' => true,
                 'signed_by' => $userId,
                 'signed_at' => current_time('mysql'),
                 'signed_name' => $this->text($data['signed_name'] ?? ''),
-                'signature_data' => $this->signatureData($data['signature_data'] ?? '')
+                'signature_data' => $signatureData
             ];
 
             $bothSigned = $this->isBothSigned($contractData);
@@ -88,6 +116,7 @@ class ContractService {
             ];
 
             if ($bothSigned) {
+                $status = 'signed';
                 $updateData['status'] = 'signed';
                 $updateData['signed_at'] = current_time('mysql');
                 $contractData['signed_at'] = $updateData['signed_at'];
@@ -96,20 +125,31 @@ class ContractService {
 
             $this->repository->update($contractId, $updateData);
 
-            $orderId = null;
-
             if ($bothSigned) {
-                $orderId = $this->orderService->createFromContract($contractId, false);
-                $this->emailContract($contractId, $contractData);
+                $existingOrder = $this->orderRepository->findByContractId($contractId);
+
+                if ($existingOrder) {
+                    $orderId = (int) $existingOrder->id;
+                } else {
+                    $orderId = (int) $this->orderService->createFromContract($contractId, false);
+                }
             }
 
             $this->transactionRepository->commit();
 
+            if ($bothSigned && function_exists('wp_schedule_single_event')) {
+                $args = [$contractId];
+
+                if (!wp_next_scheduled('b2b_send_signed_contract_email', $args)) {
+                    wp_schedule_single_event(time() + 10, 'b2b_send_signed_contract_email', $args);
+                }
+            }
+
             return [
-                'contract_id' => (int) $contractId,
-                'status' => $bothSigned ? 'signed' : 'draft',
+                'contract_id' => $contractId,
+                'status' => $bothSigned ? 'signed' : $status,
                 'order_id' => $orderId,
-                'contract' => $this->detail($contractId)
+                'already_signed' => false
             ];
 
         } catch (Exception $e) {
@@ -547,6 +587,25 @@ class ContractService {
             : trim((string) $value);
     }
 
+    public function sendSignedContractEmail($contractId) {
+        $contract = $this->repository->findById((int) $contractId);
+
+        if (!$contract) {
+            error_log('CONTRACT MAIL FAILED: contract not found #' . (int) $contractId);
+            return false;
+        }
+
+        if ($contract->status !== 'signed') {
+            error_log('CONTRACT MAIL SKIPPED: contract not signed #' . (int) $contractId);
+            return false;
+        }
+
+        $contractData = $this->contractData($contract);
+        $this->emailContract((int) $contractId, $contractData);
+
+        return true;
+    }
+
     private function emailContract($contractId, $contractData) {
         $emails = $this->contractRecipientEmails($contractData);
 
@@ -560,24 +619,18 @@ class ContractService {
         $html = $this->contractHtml($contractData);
         $body = $this->contractEmailBody($contractData) . $html;
         $attachments = $this->contractAttachments($contractId, $html);
-        $headers = ['Content-Type: text/html; charset=UTF-8'];
-
         try {
             if (class_exists('Mailer')) {
                 Mailer::sendContract($emails, $subject, $body, $attachments);
                 return;
             }
-        } catch (Exception $e) {
+
+            error_log('CONTRACT MAIL FAILED: Mailer class not found');
+        } catch (Throwable $e) {
             error_log('CONTRACT SMTP MAIL FAILED: ' . $e->getMessage());
         }
 
-        if (function_exists('wp_mail')) {
-            $sent = wp_mail($emails, $subject, $body, $headers, $attachments);
-
-            if (!$sent) {
-                error_log('CONTRACT WP MAIL FAILED: contract #' . (int) $contractId);
-            }
-        }
+        return;
     }
 
     private function contractRecipientEmails($contractData) {

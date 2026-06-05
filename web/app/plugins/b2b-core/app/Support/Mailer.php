@@ -139,25 +139,15 @@ class Mailer {
             $mail->send();
 
             error_log('CONTRACT MAIL SENT TO: ' . implode(', ', $validEmails));
-        } catch (Exception $e) {
-            error_log('CONTRACT MAIL ERROR: ' . $mail->ErrorInfo);
-
-            if (function_exists('wp_mail')) {
-                $headers = ['Content-Type: text/html; charset=UTF-8'];
-                $sent = wp_mail($validEmails, $subject, $body, $headers, $existingAttachments);
-
-                if ($sent) {
-                    error_log('CONTRACT WP MAIL SENT TO: ' . implode(', ', $validEmails));
-                    return;
-                }
+            } catch (Exception $e) {
+                error_log('CONTRACT MAIL ERROR: ' . $mail->ErrorInfo);
+                throw new Exception('Khong gui duoc email hop dong');
             }
-
-            throw new Exception('Khong gui duoc email hop dong');
-        }
     }
+
     public static function sendAdminNotification($toEmails, $subject, $body, array $attachments = []) {
-    self::sendContract($toEmails, $subject, $body, $attachments);
-}
+        self::sendContract($toEmails, $subject, $body, $attachments);
+    }
 
 
     public static function sendResetPassword($toEmail, $otp) {
