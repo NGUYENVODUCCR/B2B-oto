@@ -172,19 +172,7 @@ jobs:
                       /var/www/html/web/app/uploads \
                       /var/www/html/web/app/cache
             
-                    cat > /var/www/html/web/.htaccess <<'HTACCESS_EOF'
-            # BEGIN WordPress
-            <IfModule mod_rewrite.c>
-            RewriteEngine On
-            RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-            RewriteBase /
-            RewriteRule ^index\.php$ - [L]
-            RewriteCond %{REQUEST_FILENAME} !-f
-            RewriteCond %{REQUEST_FILENAME} !-d
-            RewriteRule . /index.php [L]
-            </IfModule>
-            # END WordPress
-            HTACCESS_EOF
+                    printf '%s\n' '# BEGIN WordPress' '<IfModule mod_rewrite.c>' 'RewriteEngine On' 'RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]' 'RewriteBase /' 'RewriteRule ^index\.php$ - [L]' 'RewriteCond %{REQUEST_FILENAME} !-f' 'RewriteCond %{REQUEST_FILENAME} !-d' 'RewriteRule . /index.php [L]' '</IfModule>' '# END WordPress' > /var/www/html/web/.htaccess
             
                     chown www-data:www-data /var/www/html/web/.htaccess
                     chmod 644 /var/www/html/web/.htaccess
