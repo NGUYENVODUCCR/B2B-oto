@@ -93,8 +93,8 @@ jobs:
             WP_SITEURL='${{ secrets.WP_SITEURL }}'
             
             MAIL_HOST='smtp-relay.brevo.com'
-            MAIL_PORT='587'
-            MAIL_ENCRYPTION='tls'
+            MAIL_PORT='2525'
+            MAIL_ENCRYPTION=''
             MAIL_USERNAME='${{ secrets.MAIL_USERNAME }}'
             MAIL_PASSWORD='${{ secrets.MAIL_PASSWORD }}'
             MAIL_FROM_EMAIL='${{ secrets.MAIL_FROM_EMAIL }}'
