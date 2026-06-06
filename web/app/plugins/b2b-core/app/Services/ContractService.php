@@ -740,6 +740,44 @@ class ContractService {
         </html>';
     }
 
+    private function detailedContractTermsHtml() {
+        return '
+        <h3>ĐIỀU 3. ĐIỀU KHOẢN THỰC HIỆN</h3>
+
+        <h4>A/ Trách nhiệm bên bán</h4>
+        <p><strong>1.</strong> Người bán chỉ nhận được tiền hàng sau khi người mua xác nhận đã nhận được hàng hoặc được admin ký xác nhận đảm bảo tính đúng đắn của quy trình trước pháp luật.</p>
+        <p><strong>2.</strong> Thông tin mẫu mã sản phẩm, số lượng và giá cả phải tuân theo thông tin mẫu mã, số lượng và báo giá đã được chấp nhận trong hợp đồng này.</p>
+        <p><strong>3.</strong> Người bán phải giao hàng theo báo giá đã thỏa thuận, chỉ giao hàng khi người mua đã thanh toán xong escrow đã được hệ thống xác nhận trạng thái đã thanh toán trên đơn hàng và phải cung cấp thông tin cập nhật tiến trình giao hàng trung thực.</p>
+        <p><strong>4.</strong> Người bán phải đảm bảo tính đúng đắn của minh chứng đối với việc đơn vị vận chuyển thông báo giao hàng thành công cho người mua. Nghiêm cấm mọi hành vi giả dạng minh chứng xác nhận giao hàng thành công của đơn vị vận chuyển.</p>
+        <p><strong>5.</strong> Người bán phải đảm bảo uy tín của đơn vị vận chuyển của mình trong phiên giao dịch.</p>
+        <p><strong>6.</strong> Đối với việc tự ý hủy đơn hàng đến từ phía bên bán, bên bán phải chịu hoàn toàn tổn thất của quá trình vận chuyển và giá trị hàng hóa thất thoát.</p>
+        <p><strong>7.</strong> Sàn giao dịch đang áp dụng mức thuế và phí là 3% trên tổng giá trị đơn hàng. Trong đó 1,5% tiền thuế nộp vào ngân sách nhà nước gồm Thuế Giá trị gia tăng 1% và Thuế Thu nhập cá nhân 0,5%, 1,5% còn lại là phí vận hành trả cho sàn.</p>
+
+        <h4>B/ Trách nhiệm bên mua</h4>
+        <p><strong>1.</strong> Người mua cần thanh toán khoản tiền ký quỹ cho nền tảng sau khi ký điện tử xác nhận hợp đồng có hiệu lực pháp lý, tức trước khi hệ thống thành lập xong đơn hàng và trước khi người bán giao hàng.</p>
+        <p><strong>2.</strong> Người mua có thể kiểm tra hàng hóa trong thời gian không quá 3 ngày kể từ khi nhận được hàng. Phải xác nhận đã nhận hàng khi hàng hóa đúng như thông tin đăng ký trong hợp đồng ngay trong thời hạn kiểm tra hàng này.</p>
+        <p><strong>3.</strong> Nếu người mua không xác nhận đã nhận hàng sau 3 ngày khi đã nhận được hàng trong khi đơn vị vận chuyển đã báo lại cho người bán cùng hệ thống đã giao hàng thành công, hệ thống có thể giải ngân tiền ký quỹ cho người bán mà không cần bên mua xác nhận.</p>
+        <p><strong>4.</strong> Địa chỉ giao hàng là địa chỉ công ty người mua đã xác nhận khi đăng ký mở tài khoản mua hàng trên hệ thống. Bên mua phải đảm bảo đúng địa chỉ này.</p>
+        <p><strong>5.</strong> Đối với việc tự ý hủy đơn hàng đến từ phía bên mua, bên mua phải chi trả chi phí tổn thất của quá trình vận chuyển và giá trị hàng hóa thất thoát.</p>
+
+        <h4>C/ Trách nhiệm chung khi tham gia hợp đồng</h4>
+        <p><strong>1.</strong> Cả hai bên đều có thể mở yêu cầu hỗ trợ. Bộ phận hỗ trợ có thể xem xét bằng chứng, hành vi tuân theo hợp đồng và tính đúng đắn của quy trình trước khi hoàn tiền hoặc giải ngân tiền.</p>
+        <p><strong>2.</strong> Đối với việc hủy đơn hàng đến từ cả hai phía, hệ thống sẽ đảm bảo hoàn đủ khoản tiền ký quỹ bên mua gửi vào escrow sau khi đã tính toán và xử lý các tổn thất phát sinh nếu có.</p>
+        <p><strong>3.</strong> Cả hai bên và bên hệ thống trung gian phải đảm bảo thực thi đúng với điều khoản hợp đồng đặt ra.</p>
+        <p><strong>4.</strong> Mọi hành vi vi phạm hợp đồng đã gây ra tổn thất cho đơn hàng, bên vi phạm phải chịu trách nhiệm trước pháp luật.</p>
+        <p><strong>5.</strong> Thông tin người đại diện công ty và thông tin công ty phải đúng.</p>
+
+        <h4>D/ Trách nhiệm của hệ thống sàn TMDT B2B Marketplace</h4>
+        <p><strong>1.</strong> Hệ thống chỉ có thể đảm bảo trực tiếp quyền lợi của bên bán nếu thất thoát hàng hóa đến từ hành vi của bên mua. Trong trường hợp thất thoát hàng hóa đến từ bên bán hoặc đơn vị vận chuyển của bên bán, hệ thống chỉ đảm bảo hỗ trợ cung cấp đầy đủ thông tin giấy tờ hợp đồng và mọi chi tiết về thông tin đơn hàng.</p>
+        <p><strong>2.</strong> Trước khi tiền ký quỹ được giải ngân cho bên bán và sau khi hợp đồng đã có hiệu lực pháp lý nhờ sự thể hiện đồng ý thông qua chữ ký điện tử của cả hai bên, thì việc tự ý hủy đơn hàng tuyệt đối bị nghiêm cấm. Thời điểm này việc hủy đơn hàng không thể thực hiện đơn phương mà bắt buộc phải có sự đồng ý của cả hai bên và được support trực tiếp đại diện bên thứ ba hệ thống tiếp nhận yêu cầu, tiến hành hòa giải để tính toán và điều chỉnh tổn thất gây ra cho đơn hàng/tiền gửi. Khi hòa giải thành công, ở bước cuối cùng hệ thống mới hỗ trợ dừng đơn hàng, đồng thời đánh dấu đơn hàng đã bị hủy và hoàn lại tiền ký quỹ theo kết quả xử lý.</p>
+        <p><strong>3.</strong> Hệ thống phải đặt tính Minh Bạch - Bảo Mật - Uy Tín lên hàng đầu.</p>
+        <p><strong>4.</strong> Không được tự ý sử dụng hoặc sử dụng thông tin của khách hàng với mục đích trái pháp luật.</p>
+
+        <h3>ĐIỀU 4. HIỆU LỰC VÀ KÝ KẾT</h3>
+        <p>Hợp đồng có hiệu lực kể từ ngày hai bên ký điện tử trên hệ thống. Mỗi bên giữ một bản điện tử có giá trị đối chiếu trên sàn giao dịch.</p>
+        ';
+    }
+
     private function contractHtml($data) {
         $buyer = $data['buyer_company'] ?? [];
         $seller = $data['seller_company'] ?? [];
@@ -764,12 +802,7 @@ class ContractService {
             $basisHtml .= '<li>' . esc_html($basis) . '</li>';
         }
 
-        $termsHtml = '';
-        $termNumber = 1;
-        foreach (($data['terms'] ?? $this->defaultTerms()) as $term) {
-            $termsHtml .= '<p><strong>' . esc_html((string) $termNumber) . '.</strong> ' . esc_html($term) . '</p>';
-            $termNumber++;
-        }
+        $termsHtml = $this->detailedContractTermsHtml();
 
         $buyerSignature = $data['signatures']['buyer']['signature_data'] ?? '';
         $sellerSignature = $data['signatures']['seller']['signature_data'] ?? '';
@@ -808,9 +841,8 @@ class ContractService {
           <p><strong>Tạm tính:</strong> ' . esc_html(number_format((float) ($data['subtotal_amount'] ?? 0), 0, ',', '.')) . ' VND</p>
           <p><strong>Khuyến mãi:</strong> ' . esc_html(number_format((float) ($data['discount_total'] ?? 0), 0, ',', '.')) . ' VND</p>
           <p><strong>Tổng thanh toán:</strong> ' . esc_html(number_format((float) ($data['total_amount'] ?? 0), 0, ',', '.')) . ' VND</p>
-          <h3>Điều khoản thực hiện</h3>
-          ' . $termsHtml . '
-          <h3>Chữ ký điện tử</h3>
+            ' . $termsHtml . '
+            <h3>Chữ ký điện tử</h3>
           <table style="width:100%;text-align:center"><tr>
             <td><strong>ĐẠI DIỆN BÊN B</strong><br>' . ($buyerSignature ? '<img src="' . esc_attr($buyerSignature) . '" style="max-height:90px">' : '') . '<br>' . esc_html($data['signatures']['buyer']['signed_name'] ?? '') . '</td>
             <td><strong>ĐẠI DIỆN BÊN A</strong><br>' . ($sellerSignature ? '<img src="' . esc_attr($sellerSignature) . '" style="max-height:90px">' : '') . '<br>' . esc_html($data['signatures']['seller']['signed_name'] ?? '') . '</td>

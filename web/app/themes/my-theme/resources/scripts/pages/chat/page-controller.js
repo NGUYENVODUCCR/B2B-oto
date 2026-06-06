@@ -321,7 +321,7 @@ function renderDealPanel() {
   setDealPanelHtml(html);
 }
 
-function renderActivePane(options = {}) {
+function renderRfqHeader() {
   const rfq = state.rfqDetail?.rfq;
 
   if (!rfq) return;
@@ -332,6 +332,12 @@ function renderActivePane(options = {}) {
   qs('chatActiveKicker').innerText = `RFQ #${rfq.id}`;
   qs('chatActiveMeta').innerText = rfq.product_names || (state.rfqDetail.items || []).map((item) => item.product_name).filter(Boolean).join(', ');
   qs('chatActiveStatus').innerText = statusLabel(rfq.status);
+}
+
+function renderActivePane(options = {}) {
+  if (!state.rfqDetail?.rfq) return;
+
+  renderRfqHeader();
 
   renderConversations();
   renderMessages({ forceScroll: Boolean(options.forceScroll) });
@@ -397,7 +403,17 @@ async function loadContractAndOrder() {
   }
 }
 
-async function openConversation(rfqId) {
+async function openConversation(rfqId, options = {}) {
+  const isCurrentConversation = (
+    !state.activeSupportTicketId
+    && !state.activeBulkId
+    && String(state.activeId) === String(rfqId)
+    && Boolean(state.rfqDetail?.rfq)
+  );
+  const preserveContent = options.preserveContent ?? isCurrentConversation;
+  const previousMessages = preserveContent ? state.messages : [];
+  const previousQuotations = preserveContent ? state.quotations : [];
+
   state.activeSupportTicketId = null;
   state.activeTicket = null;
   clearActiveTicketContext();
@@ -407,8 +423,12 @@ async function openConversation(rfqId) {
   state.chatSocket?.subscribe?.(rfqId);
   qs('chatActivePane')?.classList.remove('hidden');
   qs('chatEmptyState')?.classList.add('hidden');
-  qs('chatMessages').innerHTML = '<div class="chat-empty">Đang tải tin nhắn...</div>';
-  qs('chatDealPanel').innerHTML = '<div class="chat-empty">Đang tải giao dịch...</div>';
+
+  if (!preserveContent) {
+    setMessageBoxHtml('<div class="chat-empty">Đang tải tin nhắn...</div>');
+    setDealPanelHtml('<div class="chat-empty">Đang tải giao dịch...</div>');
+  }
+
   renderConversations();
 
   state.rfqDetail = await ChatAPI.detail(rfqId);
@@ -419,11 +439,11 @@ async function openConversation(rfqId) {
       ...state.rfqDetail.rfq,
     };
   }
-  state.messages = await ChatAPI.messages(rfqId).catch(() => []);
+  state.messages = await ChatAPI.messages(rfqId).catch(() => previousMessages);
   state.lastMessageKey = messageKey(state.messages);
-  state.quotations = await QuotationAPI.byRfq(rfqId).catch(() => []);
+  state.quotations = await QuotationAPI.byRfq(rfqId).catch(() => previousQuotations);
   await loadContractAndOrder();
-  renderActivePane({ forceScroll: true });
+  renderActivePane({ forceScroll: Boolean(options.forceScroll) || !preserveContent });
 
   const url = new URL(window.location.href);
   url.searchParams.delete('support_ticket_id');
@@ -445,8 +465,8 @@ async function openBulkConversation(bulkId) {
   state.reviewDetail = null;
   qs('chatActivePane')?.classList.remove('hidden');
   qs('chatEmptyState')?.classList.add('hidden');
-  qs('chatMessages').innerHTML = '<div class="chat-empty">Đang tải tin nhắn bulk...</div>';
-  qs('chatDealPanel').innerHTML = '<div class="chat-empty">Đang tải bulk RFQ...</div>';
+  setMessageBoxHtml('<div class="chat-empty">Đang tải tin nhắn bulk...</div>');
+  setDealPanelHtml('<div class="chat-empty">Đang tải bulk RFQ...</div>');
   renderConversations();
 
   const fresh = await SupportAPI.listBulkPurchases({
@@ -483,8 +503,8 @@ async function openSupportTicket(ticketId) {
   state.reviewDetail = null;
   qs('chatActivePane')?.classList.remove('hidden');
   qs('chatEmptyState')?.classList.add('hidden');
-  qs('chatMessages').innerHTML = '<div class="chat-empty">Đang tải yêu cầu hỗ trợ...</div>';
-  qs('chatDealPanel').innerHTML = '<div class="chat-empty">Đang tải ticket support...</div>';
+  setMessageBoxHtml('<div class="chat-empty">Đang tải yêu cầu hỗ trợ...</div>');
+  setDealPanelHtml('<div class="chat-empty">Đang tải ticket support...</div>');
   renderConversations();
 
   const data = await SupportAPI.detail(ticketId);
@@ -536,6 +556,7 @@ function mergeActiveSummary() {
     ...state.rfqDetail.rfq,
     status: summary.status || state.rfqDetail.rfq.status,
   };
+  renderRfqHeader();
 }
 
 async function refreshConversations(options = {}) {
