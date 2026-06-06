@@ -98,7 +98,6 @@ jobs:
             MAIL_USERNAME='${{ secrets.MAIL_USERNAME }}'
             MAIL_PASSWORD='${{ secrets.MAIL_PASSWORD }}'
             MAIL_FROM_EMAIL='${{ secrets.MAIL_FROM_EMAIL }}'
-            MAIL_FROM_ADDRESS='${{ secrets.MAIL_FROM_EMAIL }}'
             MAIL_FROM_NAME='Sanoto B2B'
             
             SMS_TOKEN='${{ secrets.SMS_TOKEN }}'
