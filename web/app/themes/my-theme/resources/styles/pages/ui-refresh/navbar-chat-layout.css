@@ -32,7 +32,7 @@ body[data-has-navbar="1"] .b2b-navbar {
 }
 
 body[data-has-navbar="1"] main.container {
-  margin-top: calc(18px + var(--b2b-adminbar-height-fixed) + var(--b2b-navbar-height-fixed)) !important;
+  margin-top: calc(18px + var(--b2b-adminbar-height-fixed) + var(--b2b-navbar-height-fixed) - 20px) !important;
 }
 
 
@@ -55,13 +55,13 @@ body[data-has-navbar="1"][data-page="messages"] main.container {
   width: 100vw !important;
   max-width: 100vw !important;
 
-  margin-top: calc(var(--b2b-adminbar-height-fixed) + var(--b2b-navbar-height-fixed)) !important;
+  margin-top: calc(var(--b2b-adminbar-height-fixed) + var(--b2b-navbar-height-fixed) - 42px) !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
   margin-bottom: 0 !important;
 
-  height: calc(100dvh - var(--b2b-adminbar-height-fixed) - var(--b2b-navbar-height-fixed) - 28px) !important;
-  max-height: calc(100dvh - var(--b2b-adminbar-height-fixed) - var(--b2b-navbar-height-fixed) - 28px) !important;
+  height: calc(103dvh - var(--b2b-adminbar-height-fixed) - var(--b2b-navbar-height-fixed) - 0px) !important;
+  max-height: calc(103dvh - var(--b2b-adminbar-height-fixed) - var(--b2b-navbar-height-fixed) - 0px) !important;
 
   padding: 0 !important;
   overflow: hidden !important;

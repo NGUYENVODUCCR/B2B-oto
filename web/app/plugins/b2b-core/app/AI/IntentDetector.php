@@ -79,6 +79,10 @@ class IntentDetector
         $domainKeywords = [
 
             'seller',
+            'người bán',
+            'đăng ký bán',
+            'bán hàng',
+            'nhà cung cấp',
             'buyer',
             'rfq',
             'quotation',
