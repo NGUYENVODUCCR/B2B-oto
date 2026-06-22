@@ -63,4 +63,6 @@ export default async (app) => {
     .useTailwindFontFamily()
     .useTailwindFontSize()
     .enable();
+    
+  app.minimize(true);
 };
