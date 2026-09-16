@@ -14,3 +14,4 @@ Development Team:
 This project represents a practical research effort focused on applying modern web architecture, API-driven business workflows, and scalable marketplace concepts into a real-world oriented B2B trading environment.
 
 Developed in 2026 for academic, educational, and research purposes.
+@Nguyen Vo Duc 2026
