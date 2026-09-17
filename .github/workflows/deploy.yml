@@ -290,14 +290,42 @@ jobs:
             fi
             
             echo "== Check DB connection from container =="
+
             docker exec sanoto-wordpress sh -lc '
               set -a
               . /var/www/html/.env
               set +a
+
               DB_HOST_ONLY="${DB_HOST%:*}"
               DB_PORT_ONLY="${DB_HOST##*:}"
+
               echo "DB_HOST=$DB_HOST"
-              timeout 10 mysql -h "$DB_HOST_ONLY" -P "$DB_PORT_ONLY" -u "$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -e "SELECT 1;"
+              echo "DB_HOST_ONLY=$DB_HOST_ONLY"
+              echo "DB_PORT_ONLY=$DB_PORT_ONLY"
+
+              for i in 1 2 3 4 5 6; do
+                echo "DB connection attempt $i/6..."
+
+                if timeout 10 mysql \
+                  -h "$DB_HOST_ONLY" \
+                  -P "$DB_PORT_ONLY" \
+                  -u "$DB_USER" \
+                  -p"$DB_PASSWORD" \
+                  "$DB_NAME" \
+                  -e "SELECT 1;"
+                then
+                  echo "DB connection OK."
+                  exit 0
+                fi
+
+                if [ "$i" -lt 6 ]; then
+                  echo "DB not ready. Retry after 5 seconds..."
+                  sleep 5
+                fi
+              done
+
+              echo "ERROR: DB connection failed after 6 attempts."
+              exit 1
             '
             
             echo "== Final HTTP tests =="
