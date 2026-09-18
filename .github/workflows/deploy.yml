@@ -86,7 +86,7 @@ jobs:
             DB_NAME='${{ secrets.DB_NAME }}'
             DB_USER='${{ secrets.DB_USER }}'
             DB_PASSWORD='${{ secrets.DB_PASSWORD }}'
-            DB_HOST='172.17.0.1:3306'
+            DB_HOST='host.docker.internal:3306'
             
             WP_ENV='${{ secrets.WP_ENV }}'
             WP_HOME='${{ secrets.WP_HOME }}'
@@ -160,7 +160,7 @@ jobs:
             
                     test -f /deploy-env/app.env
                     cp /deploy-env/app.env /var/www/html/.env
-                    sed -i "s/^DB_HOST=.*/DB_HOST='172.17.0.1:3306'/" /var/www/html/.env
+                    sed -i "s/^DB_HOST=.*/DB_HOST='host.docker.internal:3306'/" /var/www/html/.env
                     chmod 644 /var/www/html/.env
             
                     mkdir -p \
