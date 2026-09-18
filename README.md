@@ -358,6 +358,11 @@ Commercial use requires permission from the project owner.
 
 - Võ Ngọc Lâm: Swagger API Documentation, UI/UX Design (Figma), Frontend Framework Support, Documentation, Deployment, Testing.
 
+@Please contact us if you are looking for young and enthusiastic programmer candidates.=)
+nguyenvoduc2004@gmail.com
+hado100385@gmail.com
+huynhduchieu10421@gmail.com 
+
 ---
 
 ### Collaboration
@@ -396,3 +401,4 @@ Click <a href="docs/images/scrum-burndown-chart.png">here</a> to view the origin
 
 ----
 ### Have a nice day.
+Written by @nguyenvoduc (2026)
