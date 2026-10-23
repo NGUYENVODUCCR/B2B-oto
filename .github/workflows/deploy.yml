@@ -190,7 +190,7 @@ jobs:
                   start_period: 30s
             
                 extra_hosts:
-                  - "host.docker.internal:host-gateway"
+                  - "host.docker.internal:172.18.0.1"
             
                 env_file:
                   - ./runtime.env
